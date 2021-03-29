@@ -13,7 +13,3 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
-      # Build
-      - name: Install
-        run: npm ci
