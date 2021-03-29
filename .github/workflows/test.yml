@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      
+      - name: Install Inspec
+        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec 
         
       - name: Run Inspec
         run: inspec exec test.rb -t ssh://user@hostname --reporter=json:/inspec-output/inspec_results.json
