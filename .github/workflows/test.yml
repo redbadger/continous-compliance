@@ -14,10 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Run Inspec
-        run: inspec exec test.rb -t ssh://user@hostname --reporter=json:/inspec-output/inspec_results.json
-      - name: Upload Inspec Results
-        uses: actions/upload-artifact@v2
+      # Build
+      - name: Cache node modules
+        uses: actions/cache@v2
         with:
-          name: inspec_results
-          path: /inspec-output/inspec_results.json
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install
+        run: npm ci
