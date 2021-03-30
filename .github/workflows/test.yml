@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -14,6 +15,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      # Build
-      - name: Install
-        run: npm ci
+      - name: Install Inspec
+        run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
+
+      -name: Accept inspec licence
+        run: hab license accept
+      - name: Run Inspec
+        run: inspec exec example.rb -t ssh://user@hostname --reporter=json:/inspec-output/inspec_results.json
+      - name: Upload Inspec Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: inspec_results
+          path: /inspec-output/inspec_results.json
