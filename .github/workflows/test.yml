@@ -19,7 +19,7 @@ jobs:
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
       - name: Run Inspec
-        run: inspec exec example.rb --chef-license=accept -t ssh://user@hostname --reporter=json:/inspec-output/inspec_results.json
+        run: inspec exec example.rb --chef-license=accept -t --reporter=json:/inspec-output/inspec_results.json
       - name: Upload Inspec Results
         uses: actions/upload-artifact@v2
         with:
