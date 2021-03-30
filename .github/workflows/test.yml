@@ -18,7 +18,7 @@ jobs:
       - name: Install Inspec
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
-      -name: Accept inspec licence
+      - name: Accept inspec licence
         run: hab license accept
       - name: Run Inspec
         run: inspec exec example.rb -t ssh://user@hostname --reporter=json:/inspec-output/inspec_results.json
