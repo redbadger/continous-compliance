@@ -19,4 +19,4 @@ jobs:
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
       - name: Run Inspec
-        run: inspec exec profile/controls/example.rb --chef-license=accept
+        run: inspec exec profile --chef-license=accept
