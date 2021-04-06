@@ -1,17 +1,22 @@
 {
-  "name": "continous-compliance",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:redbadger/continous-compliance.git",
+  "contributors": [
+    "Anubha Singh <anubha.singh@red-badger.com>",
+    "Dimple Patel <dimple.patel@red-badger.com>",
+    "Pedro Martin <pedro.martin@red-badger.com>"
+  ],
   "description": "GitHub Action that gather compliance evidence and store it in the cloud",
-  "author": "Pedro Martin <pataruco@gmail.com>",
-  "license": "MIT",
   "devDependencies": {
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
     "typescript": "^4.2.3"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "license": "MIT",
   "lint-staged": {
     "*.{js,json,yml,md}": [
       "yarn prettier --write"
@@ -21,9 +26,10 @@
       "prettier --write"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  }
+  "name": "continous-compliance",
+  "repository": "git@github.com:redbadger/continous-compliance.git",
+  "scripts": {
+    "build": "yarn tsc --build"
+  },
+  "version": "1.0.0"
 }
