@@ -1,0 +1,8 @@
+name: 'Continous Compliance'
+description: 'A tool to proof you have justifiable policies in place, and follow them'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+outputs:
+  compliance-evidence-url:
+    description: 'URL where we store it compliance evidence'

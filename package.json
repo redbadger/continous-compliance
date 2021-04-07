@@ -6,10 +6,12 @@
   ],
   "description": "GitHub Action that gather compliance evidence and store it in the cloud",
   "devDependencies": {
+    "@vercel/ncc": "^0.28.1",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "webpack": "^5.30.0"
   },
   "husky": {
     "hooks": {
@@ -26,10 +28,17 @@
       "prettier --write"
     ]
   },
+  "main": "lib/index.js",
   "name": "continous-compliance",
   "repository": "git@github.com:redbadger/continous-compliance.git",
   "scripts": {
-    "build": "yarn tsc --build"
+    "build": "yarn tsc",
+    "package": "yarn ncc build --source-map --license licenses.txt",
+    "build-package": "yarn build && yarn package"
   },
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  }
 }
