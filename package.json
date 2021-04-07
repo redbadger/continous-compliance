@@ -28,10 +28,12 @@
       "prettier --write"
     ]
   },
+  "main": "lib/index.js",
   "name": "continous-compliance",
   "repository": "git@github.com:redbadger/continous-compliance.git",
   "scripts": {
-    "build": "yarn ncc build ./src/index.ts --minify --license licenses.txt"
+    "build": "yarn tsc",
+    "package": "yarn ncc build --source-map --license licenses.txt"
   },
   "version": "1.0.0",
   "dependencies": {
