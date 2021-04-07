@@ -33,7 +33,8 @@
   "repository": "git@github.com:redbadger/continous-compliance.git",
   "scripts": {
     "build": "yarn tsc",
-    "package": "yarn ncc build --source-map --license licenses.txt"
+    "package": "yarn ncc build --source-map --license licenses.txt",
+    "build-package": "yarn build && yarn package"
   },
   "version": "1.0.0",
   "dependencies": {
