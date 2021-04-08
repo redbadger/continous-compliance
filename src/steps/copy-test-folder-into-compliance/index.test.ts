@@ -5,6 +5,8 @@ import { COMPLIANCE_FOLDER } from '../../shared/constants';
 import copyTestFolderIntoCompliance from './index';
 
 describe('copyTestFolderIntoCompliance', () => {
+  const testFolder = 'web/tests-folders';
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -29,5 +31,59 @@ describe('copyTestFolderIntoCompliance', () => {
     });
     expect(cpSpy).toHaveBeenCalledTimes(0);
     expect(result).toBeUndefined();
+  });
+
+  it('should copy test folder into compliance folder', async () => {
+    jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => testFolder));
+    jest.spyOn(core, 'setFailed').mockImplementation(jest.fn());
+    jest.spyOn(io, 'cp').mockImplementation(jest.fn());
+
+    process.env['tests-folder'] = testFolder;
+    const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const cpSpy = io.cp as jest.Mock<any, any>;
+
+    // sanity check
+    expect(getInputSpy).toHaveBeenCalledTimes(0);
+    expect(cpSpy).toHaveBeenCalledTimes(0);
+
+    await copyTestFolderIntoCompliance();
+
+    expect(getInputSpy).toHaveBeenCalledTimes(1);
+    expect(getInputSpy).toHaveBeenCalledWith('tests-folder', {
+      required: false,
+    });
+    expect(cpSpy).toHaveBeenCalledTimes(1);
+    expect(cpSpy).toHaveBeenCalledWith(testFolder, COMPLIANCE_FOLDER, {
+      recursive: true,
+      force: false,
+    });
+  });
+
+  it('should log an error copy test folder into compliance folder', async () => {
+    jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => testFolder));
+    jest.spyOn(core, 'setFailed').mockImplementation(jest.fn());
+    jest.spyOn(io, 'cp').mockRejectedValueOnce('💥');
+
+    process.env['tests-folder'] = testFolder;
+    const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const cpSpy = io.cp as jest.Mock<any, any>;
+    const setFailedSpy = core.setFailed as jest.Mock<any, any>;
+
+    // sanity check
+    expect(getInputSpy).toHaveBeenCalledTimes(0);
+    expect(cpSpy).toHaveBeenCalledTimes(0);
+    expect(setFailedSpy).toHaveBeenCalledTimes(0);
+
+    try {
+      await copyTestFolderIntoCompliance();
+
+      expect(getInputSpy).toHaveBeenCalledTimes(1);
+      expect(getInputSpy).toHaveBeenCalledWith('tests-folder', {
+        required: false,
+      });
+    } catch (error) {
+      expect(setFailedSpy).toHaveBeenCalledTimes(1);
+      expect(setFailedSpy).toHaveBeenCalledWith('Action failed with error 💥');
+    }
   });
 });
