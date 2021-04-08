@@ -1,6 +1,9 @@
 @actions/core
 MIT
 
+@actions/exec
+MIT
+
 @actions/io
 MIT
 
