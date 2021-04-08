@@ -24,17 +24,18 @@
       "yarn prettier --write"
     ],
     "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "yarn eslint --fix",
+      "yarn prettier --write"
     ]
   },
   "main": "lib/index.js",
   "name": "continous-compliance",
   "repository": "git@github.com:redbadger/continous-compliance.git",
   "scripts": {
+    "build-package": "yarn build && yarn package",
     "build": "yarn tsc",
     "package": "yarn ncc build --source-map --license licenses.txt",
-    "build-package": "yarn build && yarn package"
+    "prepare": "yarn husky install"
   },
   "version": "1.0.0",
   "dependencies": {
