@@ -1,6 +1,12 @@
 @actions/core
 MIT
 
+@actions/exec
+MIT
+
+@actions/io
+MIT
+
 webpack
 MIT
 Copyright JS Foundation and other contributors

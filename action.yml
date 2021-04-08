@@ -1,8 +1,12 @@
 name: 'Continous Compliance'
-description: 'A tool to proof you have justifiable policies in place, and follow them'
+description: 'A tool to proof you have justifiable policies in place, and you follow them'
 runs:
   using: 'node12'
   main: 'dist/index.js'
+inputs:
+  tests-folder:
+    description: 'path to tests folder'
+    required: false
 outputs:
   compliance-evidence-url:
     description: 'URL where we store it compliance evidence'
