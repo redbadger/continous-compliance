@@ -23,6 +23,7 @@ describe('createComplianceFolder', () => {
 
   it('should log an error when failed to create complaince folder', async () => {
     jest.spyOn(io, 'mkdirP').mockRejectedValueOnce('💥');
+    jest.spyOn(core, 'error').mockImplementation(jest.fn());
 
     const mkdirPSpy = io.mkdirP as jest.Mock<any, any>;
     const errorSpy = core.error as jest.Mock<any, any>;
