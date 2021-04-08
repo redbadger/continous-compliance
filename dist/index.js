@@ -101,12 +101,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec = __importStar(__nccwpck_require__(514));
+const io = __importStar(__nccwpck_require__(436));
+const constants_1 = __nccwpck_require__(280);
 const copyTestFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, function* () {
     const testsFolderPath = core.getInput('tests-folder', { required: false });
     try {
         //  eslint-disable-next-line no-console
         console.log({ testsFolderPath });
+        const options = { recursive: true, force: false };
+        yield io.cp(testsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
         yield exec.exec('ls -lah');
+        yield exec.exec(`ls -lah ./${constants_1.COMPLIANCE_FOLDER}`);
     }
     catch (error) {
         core.setFailed(`Action failed with error ${error.message}`);
