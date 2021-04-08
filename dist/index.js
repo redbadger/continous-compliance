@@ -107,8 +107,6 @@ const copyTestFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, fun
     const isTestFolderPathSet = Boolean(testsFolderPath);
     if (isTestFolderPathSet) {
         try {
-            //  eslint-disable-next-line no-console
-            console.log({ testsFolderPath });
             const options = { recursive: true, force: false };
             yield io.cp(testsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
         }

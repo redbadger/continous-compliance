@@ -33,7 +33,7 @@
     "*.{js,json,yml,md}": [
       "yarn prettier --write"
     ],
-    "*.{ts,tsx}": [
+    "*.{ts}": [
       "yarn eslint --fix",
       "yarn prettier --write"
     ]
@@ -45,7 +45,8 @@
     "build-package": "yarn build && yarn package",
     "build": "yarn tsc",
     "package": "yarn ncc build --source-map --license licenses.txt",
-    "prepare": "yarn husky install"
+    "prepare": "yarn husky install",
+    "test": "yarn jest"
   },
   "version": "1.0.0",
   "dependencies": {
