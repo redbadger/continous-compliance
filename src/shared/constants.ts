@@ -1,1 +1,1 @@
-export const COMPLIANCE_FOLDER = '/compliance';
+export const COMPLIANCE_FOLDER = 'compliance';

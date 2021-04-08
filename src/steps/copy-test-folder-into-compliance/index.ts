@@ -8,7 +8,7 @@ const copyTestFolderIntoCompliance = async (): Promise<void> => {
     console.log({ testsFolderPath });
     await exec.exec('ls -lah');
   } catch (error) {
-    core.setFailed(`Action failed with error ${error}`);
+    core.setFailed(`Action failed with error ${error.message}`);
   }
 };
 
