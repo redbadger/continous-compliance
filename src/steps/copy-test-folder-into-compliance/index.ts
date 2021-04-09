@@ -12,7 +12,9 @@ const copyTestFolderIntoCompliance = async (): Promise<void> => {
       const options = { recursive: true, force: false };
       await io.cp(testsFolderPath, COMPLIANCE_FOLDER, options);
     } catch (error) {
-      core.setFailed(`Action failed with error ${error.message}`);
+      throw new Error(
+        `Error: failed to copy files from ${testsFolderPath} to ${COMPLIANCE_FOLDER}, ${error.message}`,
+      );
     }
   } else {
     return;

@@ -1,8 +1,7 @@
-import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { COMPLIANCE_FOLDER } from '../../shared/constants';
 
-const createUnixTimeLabel = () =>
+const createUnixTimeLabel = (): number =>
   Number((new Date().getTime() / 1000).toFixed(0));
 
 const compressComplianceFolder = async (): Promise<void> => {
@@ -11,8 +10,8 @@ const compressComplianceFolder = async (): Promise<void> => {
   try {
     await exec.exec(`zip -r ${unixTimeLabel}.zip ./${COMPLIANCE_FOLDER}`);
   } catch (error) {
-    core.setFailed(
-      `Compress folder ${COMPLIANCE_FOLDER} failed with error: ${error.message}`,
+    throw new Error(
+      `Error: failed to compressed ${COMPLIANCE_FOLDER}, ${error.message}.`,
     );
   }
 };
