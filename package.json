@@ -47,7 +47,9 @@
     "build": "yarn tsc",
     "package": "yarn ncc build --source-map --license licenses.txt",
     "prepare": "yarn husky install",
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "delete-tag": "sh ./scripts/delete-tag.sh",
+    "create-tag": "sh ./scripts/create-tag.sh"
   },
   "version": "1.0.0",
   "dependencies": {
