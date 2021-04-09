@@ -1,8 +1,14 @@
 import * as io from '@actions/io';
+import * as core from '@actions/core';
 import createComplianceFolder from './index';
 import { COMPLIANCE_FOLDER } from '../../shared/constants';
 
 describe('createComplianceFolder', () => {
+  beforeEach(() => {
+    // Prevent console.logs
+    jest.spyOn(core, 'info').mockImplementation(jest.fn());
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });

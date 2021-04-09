@@ -110,7 +110,7 @@ const compressComplianceFolder = () => __awaiter(void 0, void 0, void 0, functio
     try {
         core.info(`Compressing compliance folder and naming it ${unixTimeLabel}.zip 🗜`);
         yield exec.exec(`zip -r ${unixTimeLabel}.zip ./${constants_1.COMPLIANCE_FOLDER}`);
-        core.info(`Compressing compliance folder compressed`);
+        core.info(`Compliance folder compressed`);
     }
     catch (error) {
         throw new Error(`Error: failed to compressed ${constants_1.COMPLIANCE_FOLDER}, ${error.message}.`);

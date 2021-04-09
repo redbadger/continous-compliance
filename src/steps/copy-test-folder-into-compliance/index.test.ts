@@ -7,6 +7,12 @@ import copyTestFolderIntoCompliance from './index';
 describe('copyTestFolderIntoCompliance', () => {
   const testFolder = 'web/tests-folders';
 
+  beforeEach(() => {
+    // Prevent console.logs
+    jest.spyOn(core, 'info').mockImplementation(jest.fn());
+    jest.spyOn(core, 'warning').mockImplementation(jest.fn());
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });

@@ -1,10 +1,16 @@
 import * as exec from '@actions/exec';
+import * as core from '@actions/core';
 import { clear, advanceTo } from 'jest-date-mock';
 
 import { COMPLIANCE_FOLDER } from '../../shared/constants';
 import compressComplianceFolder from './index';
 
 describe('compressComplianceFolder', () => {
+  beforeEach(() => {
+    // Prevent console.logs
+    jest.spyOn(core, 'info').mockImplementation(jest.fn());
+  });
+
   afterEach(() => {
     clear();
     jest.restoreAllMocks();
@@ -35,6 +41,7 @@ describe('compressComplianceFolder', () => {
 
   it('should throw an error when compress compliance folder fails', async () => {
     const bang = '💥';
+
     jest.spyOn(exec, 'exec').mockImplementationOnce(() => {
       throw new Error(bang);
     });
