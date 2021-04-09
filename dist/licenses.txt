@@ -1,6 +1,9 @@
 @actions/core
 MIT
 
+@actions/io
+MIT
+
 webpack
 MIT
 Copyright JS Foundation and other contributors
