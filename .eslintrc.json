@@ -1,5 +1,6 @@
 {
   "root": true,
+  "files": ["*.ts", "*.tsx"],
   "plugins": ["jest", "@typescript-eslint"],
   "extends": ["plugin:github/recommended"],
   "parser": "@typescript-eslint/parser",
