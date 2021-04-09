@@ -6,7 +6,7 @@ GitHub Action that gather compliance evidence and store it in the cloud
 
 ## Inputs
 
-TBC
+- `tests-folder`: path to tests folder
 
 ## Outputs
 
@@ -16,11 +16,17 @@ TBC
 
 ```yml
 uses: redbadger/continous-compliance@v0.1
+width:
+  tests-folder: 'path-to-tests-folder'
 ```
+
+## What it does
+
+The steps that this action does are described [here](./src/steps/readme.md)
 
 ## Development
 
-The functionality is written in TypeScript on the [`src/`](./src) folder. To be able to compile TypeScript into JavaScript run:
+The functionality is written in TypeScript in the [`src/`](./src) folder. To be able to compile TypeScript into JavaScript run:
 
 ```sh
 yarn build
@@ -42,16 +48,10 @@ If you want to run previous scripts in one go, run:
 yarn build-package
 ```
 
-## Release
+### Release
 
 GitHub actions are available to use in repos via tag release. To create a new release:
 
 ```sh
-git tag -a -m "Test release" v0.1
-```
-
-Then push it
-
-```sh
-git push --follow-tags
+yarn create-tag v0.1
 ```
