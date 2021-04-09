@@ -16,7 +16,7 @@ const compressComplianceFolder = async (): Promise<void> => {
 
     await exec.exec(`zip -r ${unixTimeLabel}.zip ./${COMPLIANCE_FOLDER}`);
 
-    core.info(`Compressing compliance folder compressed`);
+    core.info(`Compliance folder compressed`);
   } catch (error) {
     throw new Error(
       `Error: failed to compressed ${COMPLIANCE_FOLDER}, ${error.message}.`,
