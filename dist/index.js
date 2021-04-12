@@ -285,7 +285,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const googleCloudStorage = __importStar(__nccwpck_require__(8174));
 const { Storage } = googleCloudStorage;
-const keyFilename = 'service-account.json';
+const keyFilename = '/home/runner/work/count-dracula/count-draculaservice-account.json';
 const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void 0, void 0, void 0, function* () {
     const gcpProjectId = core.getInput('gcp-project-id', { required: true });
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
@@ -298,7 +298,7 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
         console.log('cat service-account.json');
         yield exec.exec('cat service-account.json');
         const storage = new Storage({
-            keyFilename: JSON.parse(gcpApplicationCredentials),
+            keyFilename,
         });
         const result = yield storage
             .bucket('count-dracula-continous-compliance-prod')

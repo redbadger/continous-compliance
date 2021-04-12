@@ -4,7 +4,8 @@ import * as googleCloudStorage from '@google-cloud/storage';
 
 const { Storage } = googleCloudStorage;
 
-const keyFilename = 'service-account.json';
+const keyFilename =
+  '/home/runner/work/count-dracula/count-draculaservice-account.json';
 
 const storeCompressedComplianceFolderInABucket = async (
   zipFilePath: string,
@@ -26,7 +27,7 @@ const storeCompressedComplianceFolderInABucket = async (
     await exec.exec('cat service-account.json');
 
     const storage = new Storage({
-      keyFilename: JSON.parse(gcpApplicationCredentials),
+      keyFilename,
     });
 
     const result = await storage
