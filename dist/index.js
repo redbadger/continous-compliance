@@ -159,9 +159,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const io = __importStar(__nccwpck_require__(436));
 const constants_1 = __nccwpck_require__(280);
-const docsFolderPath = core.getInput('doc-folder');
-const isDocsFolderPathSet = Boolean(docsFolderPath);
 const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, function* () {
+    const docsFolderPath = core.getInput('doc-folder', { required: false });
+    const isDocsFolderPathSet = Boolean(docsFolderPath);
     if (isDocsFolderPathSet) {
         try {
             core.info(`Copy documents folder from ${docsFolderPath} into the compliance folder ${constants_1.COMPLIANCE_FOLDER}`);

@@ -4,10 +4,10 @@ import * as io from '@actions/io';
 
 import { COMPLIANCE_FOLDER } from '../../shared/constants';
 
-const docsFolderPath = core.getInput('doc-folder');
-const isDocsFolderPathSet = Boolean(docsFolderPath);
-
 const copyDocFolderIntoCompliance = async (): Promise<void> => {
+  const docsFolderPath = core.getInput('doc-folder', { required: false });
+  const isDocsFolderPathSet = Boolean(docsFolderPath);
+
   if (isDocsFolderPathSet) {
     try {
       core.info(
