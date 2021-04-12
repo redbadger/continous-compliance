@@ -16,16 +16,6 @@ const storeCompressedComplianceFolderInABucket = async (
   );
 
   try {
-    /*
-    TODO:
-    Get credentials
-    decode base64 credentials and stored
-    
-    initialize GCP client
-    Send ZIP file to bucket
-    Set output to be URL of the file
-    */
-
     await exec.exec(
       `echo ${gcpApplicationCredentials} | base64 -d > ${keyFilename}`,
     );
@@ -34,11 +24,13 @@ const storeCompressedComplianceFolderInABucket = async (
       keyFilename,
     });
 
-    await storage
+    const result = await storage
       .bucket('count-dracula-continous-compliance-prod')
       .upload(zipFilePath, {
         destination: zipFilePath,
       });
+
+    console.log({ result });
   } catch (error) {
     throw new Error(
       `Error: failed to send zip to Google Cloud storage, ${error.message}`,
@@ -47,6 +39,3 @@ const storeCompressedComplianceFolderInABucket = async (
 };
 
 export default storeCompressedComplianceFolderInABucket;
-
-// gcp-project-id
-// gcp-application-credentials
