@@ -14,7 +14,7 @@ const copyDocFolderIntoCompliance = async (): Promise<void> => {
         `Copy documents folder from ${docsFolderPath} into the compliance folder ${COMPLIANCE_FOLDER}`,
       );
 
-      const options = { required: false, force: false };
+      const options = { recursive: true, force: false };
       await io.cp(docsFolderPath, COMPLIANCE_FOLDER, options);
     } catch (error) {
       throw new Error(

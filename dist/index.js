@@ -165,7 +165,7 @@ const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, func
     if (isDocsFolderPathSet) {
         try {
             core.info(`Copy documents folder from ${docsFolderPath} into the compliance folder ${constants_1.COMPLIANCE_FOLDER}`);
-            const options = { required: false, force: false };
+            const options = { recursive: true, force: false };
             yield io.cp(docsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
         }
         catch (error) {
