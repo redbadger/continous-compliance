@@ -10,3 +10,5 @@ const copyDocFolderIntoCompliance = async (): Promise<void> => {
     throw new Error(`Error: failed something ${error.message}`);
   }
 };
+
+export default copyDocFolderIntoCompliance;
