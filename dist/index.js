@@ -290,9 +290,12 @@ const { Storage } = googleCloudStorage;
 const keyFilename = '/home/runner/work/count-dracula/count-dracula/service-account.json';
 const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield writeFile(keyFilename, credentials);
+        const buffer = Buffer.from(credentials, 'base64');
+        const jsonCredentials = buffer.toString('utf-8');
+        console.log({ jsonCredentials });
+        yield writeFile(keyFilename, jsonCredentials);
         const serviceAccount = yield readFile(keyFilename);
-        core.info(serviceAccount.toString());
+        // core.info(serviceAccount.toString());
         console.log({ serviceAccount: serviceAccount.toString() });
     }
     catch (error) {

@@ -14,9 +14,13 @@ const keyFilename =
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
-    await writeFile(keyFilename, credentials);
+    const buffer = Buffer.from(credentials, 'base64');
+    const jsonCredentials = buffer.toString('utf-8');
+    console.log({ jsonCredentials });
+
+    await writeFile(keyFilename, jsonCredentials);
     const serviceAccount = await readFile(keyFilename);
-    core.info(serviceAccount.toString());
+    // core.info(serviceAccount.toString());
     console.log({ serviceAccount: serviceAccount.toString() });
   } catch (error) {
     throw new Error(error);
