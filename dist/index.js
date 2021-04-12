@@ -42,11 +42,13 @@ const core = __importStar(__nccwpck_require__(186));
 const compress_compliance_folder_1 = __importDefault(__nccwpck_require__(696));
 const copy_test_folder_into_compliance_1 = __importDefault(__nccwpck_require__(848));
 const create_compliance_folder_1 = __importDefault(__nccwpck_require__(441));
+const store_compressed_compliance_folder_in_a_bucket_1 = __importDefault(__nccwpck_require__(714));
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield create_compliance_folder_1.default();
         yield copy_test_folder_into_compliance_1.default();
         yield compress_compliance_folder_1.default();
+        yield store_compressed_compliance_folder_in_a_bucket_1.default();
     }
     catch (error) {
         core.setFailed(error.message);
@@ -228,6 +230,73 @@ const createComplianceFolder = () => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.default = createComplianceFolder;
+
+
+/***/ }),
+
+/***/ 714:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(186));
+const storeCompressedComplianceFolderInABucket = () => __awaiter(void 0, void 0, void 0, function* () {
+    const gcpProjectId = core.getInput('gcp-project-id', { required: true });
+    const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
+    const isGcpProjectIdSet = Boolean(gcpProjectId);
+    const isGcpApplicationCredentials = Boolean(gcpApplicationCredentials);
+    console.log({
+        gcpProjectId,
+        gcpApplicationCredentials,
+        isGcpProjectIdSet,
+        isGcpApplicationCredentials,
+    });
+    try {
+        /*
+        TODO:
+        Check if inputs are given, if not return
+        Get credentials
+        decode base64 credentials and stored
+        initialize GCP client
+        Send ZIP file to bucket
+        Set output to be URL of the file
+        */
+    }
+    catch (error) {
+        throw new Error(`Error: failed to send zip to Google Cloud storage, ${error.message}`);
+    }
+});
+exports.default = storeCompressedComplianceFolderInABucket;
+// gcp-project-id
+// gcp-application-credentials
 
 
 /***/ }),

@@ -5,8 +5,15 @@ runs:
   main: 'dist/index.js'
 inputs:
   tests-folder:
-    description: 'path to tests folder'
+    description: path to tests folder
     required: false
+  gcp-project-id:
+    description: Google Cloud project ID
+    required: true
+  gcp-application-credentials:
+    description: Google Cloud service account secret encoded base64
+    required: true
+
 outputs:
   compliance-evidence-url:
     description: 'URL where we store it compliance evidence'
