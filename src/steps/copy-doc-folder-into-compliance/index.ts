@@ -11,7 +11,7 @@ const copyDocFolderIntoCompliance = async (): Promise<void> => {
   if (isDocsFolderPathSet) {
     try {
       core.info(
-        `Copy documents folder from ${docsFolderPath} into the compliance folder ${COMPLIANCE_FOLDER}`,
+        `Copy documents folder from ${docsFolderPath} into the folder ${COMPLIANCE_FOLDER}`,
       );
 
       const options = { recursive: true, force: false };
@@ -22,7 +22,7 @@ const copyDocFolderIntoCompliance = async (): Promise<void> => {
       );
     }
   } else {
-    core.warning(`doc-folder not found`);
+    core.warning(`docs-folder not found`);
     return;
   }
 };

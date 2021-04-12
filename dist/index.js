@@ -164,7 +164,7 @@ const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, func
     const isDocsFolderPathSet = Boolean(docsFolderPath);
     if (isDocsFolderPathSet) {
         try {
-            core.info(`Copy documents folder from ${docsFolderPath} into the compliance folder ${constants_1.COMPLIANCE_FOLDER}`);
+            core.info(`Copy documents folder from ${docsFolderPath} into the folder ${constants_1.COMPLIANCE_FOLDER}`);
             const options = { recursive: true, force: false };
             yield io.cp(docsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
         }
@@ -173,7 +173,7 @@ const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, func
         }
     }
     else {
-        core.warning(`doc-folder not found`);
+        core.warning(`docs-folder not found`);
         return;
     }
 });
