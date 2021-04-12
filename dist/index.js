@@ -282,7 +282,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const exec = __importStar(__nccwpck_require__(1514));
 const googleCloudStorage = __importStar(__nccwpck_require__(8174));
 const fs = __importStar(__nccwpck_require__(5747));
 const { promises: { writeFile, readFile }, } = fs;
@@ -290,13 +289,8 @@ const { Storage } = googleCloudStorage;
 const keyFilename = '/home/runner/work/count-dracula/count-dracula/service-account.json';
 const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const buffer = Buffer.from(credentials, 'base64');
-        const jsonCredentials = buffer.toString('utf-8');
-        console.log({ jsonCredentials });
+        const jsonCredentials = Buffer.from(credentials, 'base64').toString('utf-8');
         yield writeFile(keyFilename, jsonCredentials);
-        const serviceAccount = yield readFile(keyFilename);
-        // core.info(serviceAccount.toString());
-        console.log({ serviceAccount: serviceAccount.toString() });
     }
     catch (error) {
         throw new Error(error);
@@ -307,16 +301,15 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     try {
         yield createServiceAccountFile(gcpApplicationCredentials);
-        yield exec.exec('ls -lah');
-        // const storage = new Storage({
-        //   keyFilename,
-        // });
-        // const result = await storage
-        //   .bucket('count-dracula-continous-compliance-prod')
-        //   .upload(zipFilePath, {
-        //     destination: zipFilePath,
-        //   });
-        // console.log({ result });
+        const storage = new Storage({
+            keyFilename,
+        });
+        const result = yield storage
+            .bucket('count-dracula-continous-compliance-prod')
+            .upload(zipFilePath, {
+            destination: zipFilePath,
+        });
+        console.log({ result });
     }
     catch (error) {
         throw new Error(`Error: failed to send zip to Google Cloud storage, ${error.message}`);

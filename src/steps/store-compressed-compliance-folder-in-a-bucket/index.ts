@@ -14,14 +14,10 @@ const keyFilename =
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
-    const buffer = Buffer.from(credentials, 'base64');
-    const jsonCredentials = buffer.toString('utf-8');
-    console.log({ jsonCredentials });
-
+    const jsonCredentials = Buffer.from(credentials, 'base64').toString(
+      'utf-8',
+    );
     await writeFile(keyFilename, jsonCredentials);
-    const serviceAccount = await readFile(keyFilename);
-    // core.info(serviceAccount.toString());
-    console.log({ serviceAccount: serviceAccount.toString() });
   } catch (error) {
     throw new Error(error);
   }
@@ -38,16 +34,17 @@ const storeCompressedComplianceFolderInABucket = async (
 
   try {
     await createServiceAccountFile(gcpApplicationCredentials);
-    await exec.exec('ls -lah');
-    // const storage = new Storage({
-    //   keyFilename,
-    // });
-    // const result = await storage
-    //   .bucket('count-dracula-continous-compliance-prod')
-    //   .upload(zipFilePath, {
-    //     destination: zipFilePath,
-    //   });
-    // console.log({ result });
+    const storage = new Storage({
+      keyFilename,
+    });
+
+    const result = await storage
+      .bucket('count-dracula-continous-compliance-prod')
+      .upload(zipFilePath, {
+        destination: zipFilePath,
+      });
+
+    console.log({ result });
   } catch (error) {
     throw new Error(
       `Error: failed to send zip to Google Cloud storage, ${error.message}`,
