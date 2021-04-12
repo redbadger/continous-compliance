@@ -292,8 +292,10 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     try {
         yield exec.exec(`touch ${keyFilename}`);
         yield exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
+        yield exec.exec('ls -lah');
+        yield exec.exec('cat service-account.json');
         const storage = new Storage({
-            keyFilename,
+            keyFilename: JSON.parse(gcpApplicationCredentials),
         });
         const result = yield storage
             .bucket('count-dracula-continous-compliance-prod')
