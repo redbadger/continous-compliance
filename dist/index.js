@@ -287,6 +287,10 @@ const fs = __importStar(__nccwpck_require__(5747));
 const { promises: { writeFile, readFile }, } = fs;
 const { Storage } = googleCloudStorage;
 const keyFilename = '/home/runner/work/count-dracula/count-dracula/service-account.json';
+const signedUrlOptions = {
+    action: 'read',
+    expires: '03-09-2491',
+};
 const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const jsonCredentials = Buffer.from(credentials, 'base64').toString('utf-8');
@@ -297,19 +301,24 @@ const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void
     }
 });
 const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void 0, void 0, void 0, function* () {
-    const gcpProjectId = core.getInput('gcp-project-id', { required: true });
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     try {
         yield createServiceAccountFile(gcpApplicationCredentials);
         const storage = new Storage({
             keyFilename,
         });
-        const result = yield storage
-            .bucket('count-dracula-continous-compliance-prod')
-            .upload(zipFilePath, {
+        const bucket = yield storage.bucket('count-dracula-continous-compliance-prod');
+        yield bucket.upload(zipFilePath, {
             destination: zipFilePath,
         });
-        console.log({ result });
+        const file = yield bucket.file(zipFilePath);
+        const signedUrls = yield file.getSignedUrl({
+            action: 'read',
+            expires: '03-09-2491',
+        });
+        console.log({
+            signedUrls,
+        });
     }
     catch (error) {
         throw new Error(`Error: failed to send zip to Google Cloud storage, ${error.message}`);
