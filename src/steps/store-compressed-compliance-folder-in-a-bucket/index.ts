@@ -1,11 +1,26 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as googleCloudStorage from '@google-cloud/storage';
+import * as fs from 'fs';
+
+const {
+  promises: { writeFile, readFile },
+} = fs;
 
 const { Storage } = googleCloudStorage;
 
 const keyFilename =
-  '/home/runner/work/count-dracula/count-draculaservice-account.json';
+  '/home/runner/work/count-dracula/count-dracula/service-account.json';
+
+const createServiceAccountFile = async (credentials: string) => {
+  try {
+    await writeFile(keyFilename, credentials);
+    const serviceAccount = await readFile(keyFilename);
+    core.info(serviceAccount.toString());
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 const storeCompressedComplianceFolderInABucket = async (
   zipFilePath: string,
@@ -17,26 +32,16 @@ const storeCompressedComplianceFolderInABucket = async (
   );
 
   try {
-    await exec.exec(`touch ${keyFilename}`);
-
-    console.log('echo credentials into file');
-    await exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
-    await exec.exec('ls -lah');
-    await exec.exec('pwd');
-    console.log('cat service-account.json');
-    await exec.exec('cat service-account.json');
-
-    const storage = new Storage({
-      keyFilename,
-    });
-
-    const result = await storage
-      .bucket('count-dracula-continous-compliance-prod')
-      .upload(zipFilePath, {
-        destination: zipFilePath,
-      });
-
-    console.log({ result });
+    await createServiceAccountFile(gcpApplicationCredentials);
+    // const storage = new Storage({
+    //   keyFilename,
+    // });
+    // const result = await storage
+    //   .bucket('count-dracula-continous-compliance-prod')
+    //   .upload(zipFilePath, {
+    //     destination: zipFilePath,
+    //   });
+    // console.log({ result });
   } catch (error) {
     throw new Error(
       `Error: failed to send zip to Google Cloud storage, ${error.message}`,
