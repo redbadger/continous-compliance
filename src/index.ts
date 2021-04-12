@@ -9,8 +9,8 @@ const start = async (): Promise<void> => {
   try {
     await createComplianceFolder();
     await copyTestFolderIntoCompliance();
-    await compressComplianceFolder();
     await createDocFolder();
+    await compressComplianceFolder();
   } catch (error) {
     core.setFailed(error.message);
   }

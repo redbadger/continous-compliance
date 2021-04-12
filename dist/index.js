@@ -47,8 +47,8 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield create_compliance_folder_1.default();
         yield copy_test_folder_into_compliance_1.default();
-        yield compress_compliance_folder_1.default();
         yield copy_doc_folder_into_compliance_1.default();
+        yield compress_compliance_folder_1.default();
     }
     catch (error) {
         core.setFailed(error.message);
@@ -157,12 +157,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
+const io = __importStar(__nccwpck_require__(436));
+const constants_1 = __nccwpck_require__(280);
+const docsFolderPath = core.getInput('doc-folder');
+const isDocsFolderPathSet = Boolean(docsFolderPath);
 const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        core.info('Test doc-folder');
+    if (isDocsFolderPathSet) {
+        try {
+            core.info(`Copy documents folder from ${docsFolderPath} into the compliance folder ${constants_1.COMPLIANCE_FOLDER}`);
+            const options = { required: false, force: false };
+            yield io.cp(docsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
+        }
+        catch (error) {
+            throw new Error(`Error: failed to copy ${docsFolderPath} to ${constants_1.COMPLIANCE_FOLDER}, ${error.message}`);
+        }
     }
-    catch (error) {
-        throw new Error(`Error: failed something ${error.message}`);
+    else {
+        core.warning(`doc-folder not found`);
+        return;
     }
 });
 exports.default = copyDocFolderIntoCompliance;
