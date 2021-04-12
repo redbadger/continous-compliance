@@ -12,11 +12,6 @@ const { Storage } = googleCloudStorage;
 const keyFilename =
   '/home/runner/work/count-dracula/count-dracula/service-account.json';
 
-const signedUrlOptions = {
-  action: 'read',
-  expires: '03-09-2491',
-};
-
 const createServiceAccountFile = async (credentials: string) => {
   try {
     const jsonCredentials = Buffer.from(credentials, 'base64').toString(
@@ -36,15 +31,15 @@ const storeCompressedComplianceFolderInABucket = async (
     { required: true },
   );
 
+  const gcpBuketName = core.getInput('gcp-bucket-name', { required: true });
+
   try {
     await createServiceAccountFile(gcpApplicationCredentials);
     const storage = new Storage({
       keyFilename,
     });
 
-    const bucket = await storage.bucket(
-      'count-dracula-continous-compliance-prod',
-    );
+    const bucket = await storage.bucket(gcpBuketName);
 
     await bucket.upload(zipFilePath, {
       destination: zipFilePath,
@@ -52,7 +47,7 @@ const storeCompressedComplianceFolderInABucket = async (
 
     const file = await bucket.file(zipFilePath);
 
-    const signedUrls = await file.getSignedUrl({
+    const [signedUrls] = await file.getSignedUrl({
       action: 'read',
       expires: '03-09-2491',
     });
@@ -60,6 +55,9 @@ const storeCompressedComplianceFolderInABucket = async (
     console.log({
       signedUrls,
     });
+
+    core.info(`Compliance evidence uploaded to ${signedUrls}`);
+    core.setOutput('compliance-evidence-url', signedUrls);
   } catch (error) {
     throw new Error(
       `Error: failed to send zip to Google Cloud storage, ${error.message}`,
