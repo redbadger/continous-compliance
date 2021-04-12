@@ -18,8 +18,11 @@ const storeCompressedComplianceFolderInABucket = async (
   try {
     await exec.exec(`touch ${keyFilename}`);
 
+    console.log('echo credentials into file');
     await exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
     await exec.exec('ls -lah');
+    await exec.exec('pwd');
+    console.log('cat service-account.json');
     await exec.exec('cat service-account.json');
 
     const storage = new Storage({

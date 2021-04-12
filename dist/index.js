@@ -291,8 +291,11 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     try {
         yield exec.exec(`touch ${keyFilename}`);
+        console.log('echo credentials into file');
         yield exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
         yield exec.exec('ls -lah');
+        yield exec.exec('pwd');
+        console.log('cat service-account.json');
         yield exec.exec('cat service-account.json');
         const storage = new Storage({
             keyFilename: JSON.parse(gcpApplicationCredentials),
