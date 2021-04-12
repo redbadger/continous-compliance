@@ -284,9 +284,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const googleCloudStorage = __importStar(__nccwpck_require__(8174));
 const fs = __importStar(__nccwpck_require__(5747));
-const { promises: { writeFile, readFile }, } = fs;
+const { promises: { writeFile }, } = fs;
 const { Storage } = googleCloudStorage;
-const keyFilename = '/home/runner/work/count-dracula/count-dracula/service-account.json';
+const keyFilename = './service-account.json';
 const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const jsonCredentials = Buffer.from(credentials, 'base64').toString('utf-8');
@@ -300,24 +300,24 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     const gcpBuketName = core.getInput('gcp-bucket-name', { required: true });
     try {
+        core.info(`Decoding gcp-application-credentials 👀`);
         yield createServiceAccountFile(gcpApplicationCredentials);
         const storage = new Storage({
             keyFilename,
         });
+        core.info(`Authenticating with Google Cloud storage ✍🏻`);
         const bucket = yield storage.bucket(gcpBuketName);
+        core.info(`Uploading zip file to Google Cloud storage 📡`);
         yield bucket.upload(zipFilePath, {
             destination: zipFilePath,
         });
         const file = yield bucket.file(zipFilePath);
-        const [signedUrls] = yield file.getSignedUrl({
+        const [signedUrl] = yield file.getSignedUrl({
             action: 'read',
             expires: '03-09-2491',
         });
-        console.log({
-            signedUrls,
-        });
-        core.info(`Compliance evidence uploaded to ${signedUrls}`);
-        core.setOutput('compliance-evidence-url', signedUrls);
+        core.info(`Compliance evidence uploaded to ${signedUrl}`);
+        core.setOutput('compliance-evidence-url', signedUrl);
     }
     catch (error) {
         throw new Error(`Error: failed to send zip to Google Cloud storage, ${error.message}`);

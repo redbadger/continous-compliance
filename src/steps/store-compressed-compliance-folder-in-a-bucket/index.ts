@@ -4,13 +4,12 @@ import * as googleCloudStorage from '@google-cloud/storage';
 import * as fs from 'fs';
 
 const {
-  promises: { writeFile, readFile },
+  promises: { writeFile },
 } = fs;
 
 const { Storage } = googleCloudStorage;
 
-const keyFilename =
-  '/home/runner/work/count-dracula/count-dracula/service-account.json';
+const keyFilename = './service-account.json';
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
@@ -34,30 +33,30 @@ const storeCompressedComplianceFolderInABucket = async (
   const gcpBuketName = core.getInput('gcp-bucket-name', { required: true });
 
   try {
+    core.info(`Decoding gcp-application-credentials 👀`);
+
     await createServiceAccountFile(gcpApplicationCredentials);
     const storage = new Storage({
       keyFilename,
     });
 
+    core.info(`Authenticating with Google Cloud storage ✍🏻`);
     const bucket = await storage.bucket(gcpBuketName);
 
+    core.info(`Uploading zip file to Google Cloud storage 📡`);
     await bucket.upload(zipFilePath, {
       destination: zipFilePath,
     });
 
     const file = await bucket.file(zipFilePath);
 
-    const [signedUrls] = await file.getSignedUrl({
+    const [signedUrl] = await file.getSignedUrl({
       action: 'read',
       expires: '03-09-2491',
     });
 
-    console.log({
-      signedUrls,
-    });
-
-    core.info(`Compliance evidence uploaded to ${signedUrls}`);
-    core.setOutput('compliance-evidence-url', signedUrls);
+    core.info(`Compliance evidence uploaded to ${signedUrl}`);
+    core.setOutput('compliance-evidence-url', signedUrl);
   } catch (error) {
     throw new Error(
       `Error: failed to send zip to Google Cloud storage, ${error.message}`,
