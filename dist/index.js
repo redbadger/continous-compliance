@@ -160,7 +160,7 @@ const core = __importStar(__nccwpck_require__(186));
 const io = __importStar(__nccwpck_require__(436));
 const constants_1 = __nccwpck_require__(280);
 const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, function* () {
-    const docsFolderPath = core.getInput('doc-folder', { required: false });
+    const docsFolderPath = core.getInput('docs-folder', { required: false });
     const isDocsFolderPathSet = Boolean(docsFolderPath);
     if (isDocsFolderPathSet) {
         try {
