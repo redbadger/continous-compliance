@@ -45,7 +45,7 @@
   "scripts": {
     "build-package": "yarn build && yarn package",
     "build": "yarn tsc",
-    "package": "yarn ncc build --source-map --license licenses.txt",
+    "package": "yarn ncc build --source-map --license licenses.txt --minify",
     "prepare": "yarn husky install",
     "test": "yarn jest",
     "delete-tag": "sh ./scripts/delete-tag.sh",
