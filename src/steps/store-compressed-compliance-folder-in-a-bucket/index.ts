@@ -17,6 +17,7 @@ const createServiceAccountFile = async (credentials: string) => {
     await writeFile(keyFilename, credentials);
     const serviceAccount = await readFile(keyFilename);
     core.info(serviceAccount.toString());
+    console.log({ serviceAccount: serviceAccount.toString() });
   } catch (error) {
     throw new Error(error);
   }
@@ -33,6 +34,7 @@ const storeCompressedComplianceFolderInABucket = async (
 
   try {
     await createServiceAccountFile(gcpApplicationCredentials);
+    await exec.exec('ls -lah');
     // const storage = new Storage({
     //   keyFilename,
     // });

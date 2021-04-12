@@ -282,6 +282,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
+const exec = __importStar(__nccwpck_require__(1514));
 const googleCloudStorage = __importStar(__nccwpck_require__(8174));
 const fs = __importStar(__nccwpck_require__(5747));
 const { promises: { writeFile, readFile }, } = fs;
@@ -292,6 +293,7 @@ const createServiceAccountFile = (credentials) => __awaiter(void 0, void 0, void
         yield writeFile(keyFilename, credentials);
         const serviceAccount = yield readFile(keyFilename);
         core.info(serviceAccount.toString());
+        console.log({ serviceAccount: serviceAccount.toString() });
     }
     catch (error) {
         throw new Error(error);
@@ -302,6 +304,7 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     try {
         yield createServiceAccountFile(gcpApplicationCredentials);
+        yield exec.exec('ls -lah');
         // const storage = new Storage({
         //   keyFilename,
         // });
