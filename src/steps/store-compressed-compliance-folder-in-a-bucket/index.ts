@@ -4,7 +4,7 @@ import * as googleCloudStorage from '@google-cloud/storage';
 
 const { Storage } = googleCloudStorage;
 
-const keyFilename = '/tmp/account.json';
+const keyFilename = 'service-account.json';
 
 const storeCompressedComplianceFolderInABucket = async (
   zipFilePath: string,
