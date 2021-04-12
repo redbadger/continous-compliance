@@ -18,9 +18,7 @@ const storeCompressedComplianceFolderInABucket = async (
   try {
     await exec.exec(`touch ${keyFilename}`);
 
-    await exec.exec(
-      `echo ${gcpApplicationCredentials} | base64 -d > ${keyFilename}`,
-    );
+    await exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
 
     const storage = new Storage({
       keyFilename,

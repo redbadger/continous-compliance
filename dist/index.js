@@ -291,7 +291,7 @@ const storeCompressedComplianceFolderInABucket = (zipFilePath) => __awaiter(void
     const gcpApplicationCredentials = core.getInput('gcp-application-credentials', { required: true });
     try {
         yield exec.exec(`touch ${keyFilename}`);
-        yield exec.exec(`echo ${gcpApplicationCredentials} | base64 -d > ${keyFilename}`);
+        yield exec.exec(`echo "${gcpApplicationCredentials}" >> ${keyFilename}`);
         const storage = new Storage({
             keyFilename,
         });
