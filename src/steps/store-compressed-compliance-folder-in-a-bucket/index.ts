@@ -11,7 +11,7 @@ const { Storage } = googleCloudStorage;
 
 const keyFilename = './service-account.json';
 
-const createServiceAccountFile = async (credentials: string) => {
+export const createServiceAccountFile = async (credentials: string) => {
   try {
     const jsonCredentials = Buffer.from(credentials, 'base64').toString(
       'utf-8',
@@ -22,7 +22,7 @@ const createServiceAccountFile = async (credentials: string) => {
   }
 };
 
-const getZipFilePath = async (): Promise<string> => {
+export const getZipFilePath = async (): Promise<string> => {
   try {
     const patterns = ['*.zip'];
     const globber = await glob.create(patterns.join('\n'));
