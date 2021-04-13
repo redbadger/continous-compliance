@@ -5,8 +5,14 @@ runs:
   main: 'dist/index.js'
 inputs:
   tests-folder:
-    description: 'path to tests folder'
+    description: path to tests folder
     required: false
+  gcp-bucket-name:
+    description: Google Cloud storage bucket name
+    required: true
+  gcp-application-credentials:
+    description: Google Cloud service account secret encoded base64
+    required: true
   docs-folder:
     description: 'Path to docs folder'
     required: false
