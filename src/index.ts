@@ -9,8 +9,8 @@ const start = async (): Promise<void> => {
   try {
     await createComplianceFolder();
     await copyTestFolderIntoCompliance();
-    const zipFilePath = await compressComplianceFolder();
-    await storeCompressedComplianceFolderInABucket(zipFilePath);
+    await compressComplianceFolder();
+    await storeCompressedComplianceFolderInABucket();
   } catch (error) {
     core.setFailed(error.message);
   }

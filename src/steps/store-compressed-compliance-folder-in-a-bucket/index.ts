@@ -30,9 +30,18 @@ const createServiceAccountFile = async (credentials: string) => {
   }
 };
 
-const storeCompressedComplianceFolderInABucket = async (
-  zipFilePath: string,
-): Promise<void> => {
+const getZipFilePath = async (): Promise<string> => {
+  try {
+    const patterns = ['*.zip'];
+    const globber = await glob.create(patterns.join('\n'));
+    const [file] = await globber.glob();
+    return file;
+  } catch (error) {
+    throw new Error('Error: zip file not found');
+  }
+};
+
+const storeCompressedComplianceFolderInABucket = async (): Promise<void> => {
   const gcpApplicationCredentials = core.getInput(
     'gcp-application-credentials',
     { required: true },
@@ -51,9 +60,12 @@ const storeCompressedComplianceFolderInABucket = async (
     core.info(`Authenticating with Google Cloud storage ✍🏻`);
     const bucket = await storage.bucket(gcpBuketName);
 
+    const zipFilePath = await getZipFilePath();
+    const destination = zipFilePath.split('/').pop();
+
     core.info(`Uploading zip file to Google Cloud storage 📡`);
     await bucket.upload(zipFilePath, {
-      destination: zipFilePath,
+      destination,
     });
 
     const file = await bucket.file(zipFilePath);
