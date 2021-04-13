@@ -42,10 +42,12 @@ const core = __importStar(__nccwpck_require__(186));
 const compress_compliance_folder_1 = __importDefault(__nccwpck_require__(696));
 const copy_test_folder_into_compliance_1 = __importDefault(__nccwpck_require__(848));
 const create_compliance_folder_1 = __importDefault(__nccwpck_require__(441));
+const copy_doc_folder_into_compliance_1 = __importDefault(__nccwpck_require__(760));
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield create_compliance_folder_1.default();
         yield copy_test_folder_into_compliance_1.default();
+        yield copy_doc_folder_into_compliance_1.default();
         yield compress_compliance_folder_1.default();
     }
     catch (error) {
@@ -117,6 +119,65 @@ const compressComplianceFolder = () => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.default = compressComplianceFolder;
+
+
+/***/ }),
+
+/***/ 760:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(186));
+const io = __importStar(__nccwpck_require__(436));
+const constants_1 = __nccwpck_require__(280);
+const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, function* () {
+    const docsFolderPath = core.getInput('docs-folder', { required: false });
+    const isDocsFolderPathSet = Boolean(docsFolderPath);
+    if (isDocsFolderPathSet) {
+        try {
+            core.info(`Copy documents folder from ${docsFolderPath} into the folder ${constants_1.COMPLIANCE_FOLDER}`);
+            const options = { recursive: true, force: false };
+            yield io.cp(docsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
+        }
+        catch (error) {
+            throw new Error(`Error: failed to copy files from ${docsFolderPath} to ${constants_1.COMPLIANCE_FOLDER}, ${error.message}`);
+        }
+    }
+    else {
+        core.warning(`docs-folder not found`);
+        return;
+    }
+});
+exports.default = copyDocFolderIntoCompliance;
 
 
 /***/ }),

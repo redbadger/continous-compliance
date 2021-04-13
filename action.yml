@@ -7,6 +7,9 @@ inputs:
   tests-folder:
     description: 'path to tests folder'
     required: false
+  docs-folder:
+    description: 'Path to docs folder'
+    required: false
 outputs:
   compliance-evidence-url:
     description: 'URL where we store it compliance evidence'
