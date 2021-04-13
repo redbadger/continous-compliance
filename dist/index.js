@@ -169,7 +169,7 @@ const copyDocFolderIntoCompliance = () => __awaiter(void 0, void 0, void 0, func
             yield io.cp(docsFolderPath, constants_1.COMPLIANCE_FOLDER, options);
         }
         catch (error) {
-            throw new Error(`Error: failed to copy ${docsFolderPath} to ${constants_1.COMPLIANCE_FOLDER}, ${error.message}`);
+            throw new Error(`Error: failed to copy files from ${docsFolderPath} to ${constants_1.COMPLIANCE_FOLDER}, ${error.message}`);
         }
     }
     else {
