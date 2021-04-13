@@ -16,6 +16,9 @@ inputs:
   docs-folder:
     description: 'Path to docs folder'
     required: false
+  github-token:
+    description: 'GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow'
+    required: false
 outputs:
   compliance-evidence-url:
     description: 'URL where we store it compliance evidence'
