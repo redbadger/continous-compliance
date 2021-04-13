@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
-import * as exec from '@actions/exec';
 import * as googleCloudStorage from '@google-cloud/storage';
 import * as fs from 'fs';
+import * as glob from '@actions/glob';
 
 const {
   promises: { writeFile },
@@ -13,6 +13,14 @@ const keyFilename = './service-account.json';
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
+    const patterns = ['*[[]0-9].zip'];
+    const globber = await glob.create(patterns.join('\n'));
+    const files = await globber.glob();
+
+    console.log({
+      files,
+    });
+
     const jsonCredentials = Buffer.from(credentials, 'base64').toString(
       'utf-8',
     );
