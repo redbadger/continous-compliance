@@ -8,25 +8,17 @@ import * as googleCloudStorage from '@google-cloud/storage';
 const { promises } = fs;
 const { default: storeCompressedComplianceFolderInABucket } = storeIntoBucket;
 
-const mockedFile = {
-  name: 'dev.txt',
-  getSignedUrl: jest.fn(() => 'https://bucket-url.com/some-address.zip'),
-};
-
-const mockedBucket = {
-  file: jest.fn(() => mockedFile),
-  upload: jest.fn(),
-};
-
-const mockedStorage = {
-  bucket: jest.fn(() => mockedBucket),
-};
-
-jest.mock('@google-cloud/storage', () => {
-  return {
-    Storage: jest.fn(() => mockedStorage),
-  };
-});
+jest.mock('@google-cloud/storage', () => ({
+  Storage: jest.fn(() => ({
+    bucket: jest.fn(() => ({
+      file: jest.fn(() => ({
+        name: 'some-address.zip',
+        getSignedUrl: jest.fn(() => 'https://bucket-url.com/some-address.zip'),
+      })),
+      upload: jest.fn(),
+    })),
+  })),
+}));
 
 describe('storeCompressedComplianceFolderInABucket', () => {
   beforeEach(() => {
@@ -49,16 +41,11 @@ describe('storeCompressedComplianceFolderInABucket', () => {
       .mockImplementation(jest.fn());
     jest
       .spyOn(storeIntoBucket, 'getZipFilePath')
-      .mockImplementation(async () => '1234.zip');
-    // jest
-    //   .spyOn(googleCloudStorage, 'Storage')
-    //   .mockImplementation(jest.fn(() => mockedBucket));
+      .mockImplementation(async () => '/home/runner/count-dracula/1234.zip');
 
     const getInputSpy = core.getInput as jest.Mock<any, any>;
     const infoSpy = core.info as jest.Mock<any, any>;
-    const setOutputspy = core.setOutput as jest.Mock<any, any>;
-    const writeFileSpy = promises.writeFile as jest.Mock<any, any>;
-    const createSpy = glob.create as jest.Mock<any, any>;
+    const setOutputSpy = core.setOutput as jest.Mock<any, any>;
     const createServiceAccountFileSpy = storeIntoBucket.createServiceAccountFile as jest.Mock<
       any,
       any
@@ -70,11 +57,11 @@ describe('storeCompressedComplianceFolderInABucket', () => {
 
     const StorageSpy = googleCloudStorage.Storage;
 
+    // Sanity check
+    expect.assertions(20);
     expect(getInputSpy).toHaveBeenCalledTimes(0);
     expect(infoSpy).toHaveBeenCalledTimes(0);
-    expect(setOutputspy).toHaveBeenCalledTimes(0);
-    expect(writeFileSpy).toHaveBeenCalledTimes(0);
-    expect(createSpy).toHaveBeenCalledTimes(0);
+    expect(setOutputSpy).toHaveBeenCalledTimes(0);
     expect(createServiceAccountFileSpy).toHaveBeenCalledTimes(0);
     expect(getZipFilePathSpy).toHaveBeenCalledTimes(0);
     expect(StorageSpy).toHaveBeenCalledTimes(0);
@@ -82,6 +69,44 @@ describe('storeCompressedComplianceFolderInABucket', () => {
     await storeCompressedComplianceFolderInABucket();
 
     expect(infoSpy).toHaveBeenCalledTimes(4);
-    expect(setOutputspy).toHaveBeenCalledTimes(1);
+    expect(setOutputSpy).toHaveBeenCalledTimes(1);
+    expect(getInputSpy).toHaveBeenCalledTimes(2);
+    expect(createServiceAccountFileSpy).toHaveBeenCalledTimes(1);
+    expect(getZipFilePathSpy).toHaveBeenCalledTimes(1);
+    expect(StorageSpy).toHaveBeenCalledTimes(1);
+
+    expect(infoSpy).toHaveBeenNthCalledWith(
+      1,
+      'Decoding gcp-application-credentials 👀',
+    );
+
+    expect(infoSpy).toHaveBeenNthCalledWith(
+      2,
+      'Authenticating with Google Cloud storage ✍🏻',
+    );
+
+    expect(infoSpy).toHaveBeenNthCalledWith(
+      3,
+      'Uploading zip file to Google Cloud storage 📡',
+    );
+
+    expect(infoSpy).toHaveBeenNthCalledWith(
+      4,
+      'Compliance evidence uploaded to h',
+    );
+
+    expect(getInputSpy).toHaveBeenNthCalledWith(
+      1,
+      'gcp-application-credentials',
+      { required: true },
+    );
+
+    expect(getInputSpy).toHaveBeenNthCalledWith(2, 'gcp-bucket-name', {
+      required: true,
+    });
+    expect(setOutputSpy).toBeCalledWith('compliance-evidence-url', 'h');
+    expect(StorageSpy).toBeCalledWith({
+      keyFilename: './service-account.json',
+    });
   });
 });
