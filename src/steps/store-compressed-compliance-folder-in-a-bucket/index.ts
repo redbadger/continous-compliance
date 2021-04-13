@@ -13,7 +13,7 @@ const keyFilename = './service-account.json';
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
-    const patterns = ['*[[]0-9].zip'];
+    const patterns = ['*.zip'];
     const globber = await glob.create(patterns.join('\n'));
     const files = await globber.glob();
 
