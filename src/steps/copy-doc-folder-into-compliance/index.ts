@@ -18,7 +18,7 @@ const copyDocFolderIntoCompliance = async (): Promise<void> => {
       await io.cp(docsFolderPath, COMPLIANCE_FOLDER, options);
     } catch (error) {
       throw new Error(
-        `Error: failed to copy ${docsFolderPath} to ${COMPLIANCE_FOLDER}, ${error.message}`,
+        `Error: failed to copy files from ${docsFolderPath} to ${COMPLIANCE_FOLDER}, ${error.message}`,
       );
     }
   } else {
