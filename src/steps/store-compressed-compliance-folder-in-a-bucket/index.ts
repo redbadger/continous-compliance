@@ -61,14 +61,14 @@ const storeCompressedComplianceFolderInABucket = async (): Promise<void> => {
     const bucket = await storage.bucket(gcpBuketName);
 
     const zipFilePath = await getZipFilePath();
-    const destination = zipFilePath.split('/').pop();
+    const destination = zipFilePath.split('/').pop() as string;
 
     core.info(`Uploading zip file to Google Cloud storage 📡`);
     await bucket.upload(zipFilePath, {
       destination,
     });
 
-    const file = await bucket.file(zipFilePath);
+    const file = await bucket.file(destination);
 
     const [signedUrl] = await file.getSignedUrl({
       action: 'read',
