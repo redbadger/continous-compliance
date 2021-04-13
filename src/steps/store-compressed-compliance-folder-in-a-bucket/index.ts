@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
-import * as googleCloudStorage from '@google-cloud/storage';
 import * as fs from 'fs';
 import * as glob from '@actions/glob';
+import * as googleCloudStorage from '@google-cloud/storage';
 
 const {
   promises: { writeFile },
@@ -13,14 +13,6 @@ const keyFilename = './service-account.json';
 
 const createServiceAccountFile = async (credentials: string) => {
   try {
-    const patterns = ['*.zip'];
-    const globber = await glob.create(patterns.join('\n'));
-    const files = await globber.glob();
-
-    console.log({
-      files,
-    });
-
     const jsonCredentials = Buffer.from(credentials, 'base64').toString(
       'utf-8',
     );
@@ -47,18 +39,17 @@ const storeCompressedComplianceFolderInABucket = async (): Promise<void> => {
     { required: true },
   );
 
-  const gcpBuketName = core.getInput('gcp-bucket-name', { required: true });
+  const gcpBucketName = core.getInput('gcp-bucket-name', { required: true });
 
   try {
     core.info(`Decoding gcp-application-credentials 👀`);
-
     await createServiceAccountFile(gcpApplicationCredentials);
+
+    core.info(`Authenticating with Google Cloud storage ✍🏻`);
     const storage = new Storage({
       keyFilename,
     });
-
-    core.info(`Authenticating with Google Cloud storage ✍🏻`);
-    const bucket = await storage.bucket(gcpBuketName);
+    const bucket = await storage.bucket(gcpBucketName);
 
     const zipFilePath = await getZipFilePath();
     const destination = zipFilePath.split('/').pop() as string;
@@ -69,7 +60,6 @@ const storeCompressedComplianceFolderInABucket = async (): Promise<void> => {
     });
 
     const file = await bucket.file(destination);
-
     const [signedUrl] = await file.getSignedUrl({
       action: 'read',
       expires: '03-09-2491',
