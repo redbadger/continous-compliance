@@ -21,7 +21,9 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
     q,
   });
 
-  console.log({ data });
+  const { items } = data;
+
+  console.log({ data, items });
 };
 
 export default getIssuesInformationIntoCompliance;
