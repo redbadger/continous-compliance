@@ -17,8 +17,10 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
   // q=windows+label:bug+language:python+state:open&sort=created&order=asc
   // q=SHA=${sha}:type:issue
 
+  // linked:pr
+
   const octokit = github.getOctokit(ghToken);
-  const q = `q=SHA=${sha}+type:issue`;
+  const q = `q=SHA=${sha}+is:issue`;
 
   const { data } = await octokit.rest.search.issuesAndPullRequests({
     q,
