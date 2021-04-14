@@ -36,7 +36,15 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
     items: [pull_request],
   } = prs;
 
-  console.log({ pull_request });
+  const pull_number = pull_request.number;
+
+  const { data: commits } = await octokit.rest.pulls.listCommits({
+    owner,
+    repo,
+    pull_number,
+  });
+
+  console.log({ commits });
 
   // const pullRequestNumbers: number[] = pullRequests.map(
   //   // @ts-ignore
