@@ -35,7 +35,7 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
   const {
     data: issuesLinkedToPRs,
   } = await octokit.rest.search.issuesAndPullRequests({
-    issuesQ,
+    q: issuesQ,
   }); // issues
 
   const { items } = issuesLinkedToPRs;
