@@ -28,20 +28,53 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
     (pullRequest) => pullRequest.number,
   );
 
-  Promise.all(
-    pullRequestNumbers.map(async (pull_number) => {
-      const { data } = await octokit.pulls.get({
-        owner,
-        repo,
-        pull_number,
-      });
+  const { data: dataFromGraphQl } = await octokit.graphql(`
+  {
+    resource(url: "https://github.com/${owner}/${repo}/pull/${pullRequests[0].number}") {
+      ... on PullRequest {
+        timelineItems(itemTypes: [CONNECTED_EVENT, DISCONNECTED_EVENT], first: 100) {
+          nodes {
+            ... on ConnectedEvent {
+              id
+              subject {
+                ... on Issue {
+                  number
+                }
+              }
+            }
+            ... on DisconnectedEvent {
+              id
+              subject {
+                ... on Issue {
+                  number
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  `);
 
-      console.log('ISSUE ====> ', data._links.issue);
-      console.log('ISSUE HREF====> ', data._links.issue.href);
+  console.log({
+    dataFromGraphQl,
+  });
 
-      console.log({ data });
-    }),
-  );
+  // Promise.all(
+  //   pullRequestNumbers.map(async (pull_number) => {
+  //     const { data } = await octokit.pulls.get({
+  //       owner,
+  //       repo,
+  //       pull_number,
+  //     });
+
+  //     console.log('ISSUE ====> ', data._links.issue);
+  //     console.log('ISSUE HREF====> ', data._links.issue.href);
+
+  //     console.log({ data });
+  //   }),
+  // );
 };
 
 export default getIssuesInformationIntoCompliance;
