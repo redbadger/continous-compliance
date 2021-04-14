@@ -1,7 +1,9 @@
 import * as github from '@actions/github';
 import * as core from '@actions/core';
+import * as io from '@actions/io';
 import { GitHub } from '@actions/github/lib/utils';
-
+import { COMPLIANCE_FOLDER } from '../../shared/constants';
+import * as fs from 'fs';
 import { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods';
 
 type PullRequestSearchResponse = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response'];
@@ -9,24 +11,29 @@ type PullRequestListCommitsResponse = RestEndpointMethodTypes['pulls']['listComm
 type PullRequestSearchResponseItem = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response']['data']['items'][number];
 
 // TODO:
-// Type gitEvidence object
-// write file into compliance folder
-// Abstract into small function
+// Write logs info
+// Abstract small functions to another file
 
 interface GitHubEvidence {
   pull_request?: PullRequestSearchResponseItem;
   commits?: PullRequestListCommitsResponse['data'];
 }
 
-interface GetPullRequestByCommitSHA {
-  octokit: InstanceType<typeof GitHub>;
-  sha: string;
-}
+const githubFolder = `${COMPLIANCE_FOLDER}/github`;
 
 let gitEvidence: GitHubEvidence = {
   pull_request: undefined,
   commits: undefined,
 };
+
+interface GetPullRequestByCommitSHA {
+  octokit: InstanceType<typeof GitHub>;
+  sha: string;
+}
+
+const {
+  promises: { writeFile },
+} = fs;
 
 const getPullRequestByCommitSHA = async ({
   octokit,
@@ -80,7 +87,15 @@ const getCommitsByPr = async ({
   }
 };
 
-const getIssuesInformationIntoComplianceFolder = async (): Promise<void> => {
+const writeGhInfoIntoDisk = async () => {
+  try {
+    await writeFile(JSON.stringify(gitEvidence), githubFolder);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
   const ghToken = core.getInput('github-token');
   const isGhToken = Boolean(ghToken);
 
@@ -97,6 +112,9 @@ const getIssuesInformationIntoComplianceFolder = async (): Promise<void> => {
     const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
     if (pull_request) {
+      // Create github folder
+      await io.mkdirP(githubFolder);
+
       gitEvidence = { ...gitEvidence, pull_request };
       const { number: pull_number } = pull_request;
 
@@ -109,9 +127,10 @@ const getIssuesInformationIntoComplianceFolder = async (): Promise<void> => {
       });
 
       if (commits) {
-        // TODO: create object and write into disk
         gitEvidence = { ...gitEvidence, commits };
+        await writeGhInfoIntoDisk();
       } else {
+        await writeGhInfoIntoDisk();
         core.warning(`No commits associated with PR #${pull_number}`);
       }
     } else {
@@ -122,4 +141,4 @@ const getIssuesInformationIntoComplianceFolder = async (): Promise<void> => {
   }
 };
 
-export default getIssuesInformationIntoComplianceFolder;
+export default getPrInformationIntoComplianceFolder;
