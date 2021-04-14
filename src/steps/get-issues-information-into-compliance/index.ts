@@ -24,11 +24,21 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
 
   const { data } = await octokit.rest.search.issuesAndPullRequests({
     q,
-  });
+  }); // PR
 
   const { items: pullRequests } = data;
 
   console.log({ pullRequests });
+
+  const issuesQ = `repo:${owner}/${repo} is:open linked:pr`;
+
+  const {
+    data: issuesLinkedToPRs,
+  } = await octokit.rest.search.issuesAndPullRequests({
+    q,
+  }); // issues
+
+  console.log({ issuesLinkedToPRs });
 
   // const pullRequestNumbers: number[] = pullRequests.map(
   //   // @ts-ignore
