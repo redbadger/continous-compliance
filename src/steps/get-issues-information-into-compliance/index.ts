@@ -14,52 +14,23 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
 
   // const {} = context;
 
+  // type: issue;
+
   const octokit = github.getOctokit(ghToken);
-  const q = `q=SHA=${sha}`;
+  const q = `q=${encodeURIComponent(`SHA=${sha}`)}`;
 
   const { data } = await octokit.rest.search.issuesAndPullRequests({
     q,
   });
 
-  const { items: pullRequests } = data;
+  console.log({ data });
 
-  const pullRequestNumbers: number[] = pullRequests.map(
-    // @ts-ignore
-    (pullRequest) => pullRequest.number,
-  );
+  // const { items: pullRequests } = data;
 
-  const { data: dataFromGraphQl } = await octokit.graphql(`
-  {
-    resource(url: "https://github.com/${owner}/${repo}/pull/${pullRequests[0].number}") {
-      ... on PullRequest {
-        timelineItems(itemTypes: [CONNECTED_EVENT, DISCONNECTED_EVENT], first: 100) {
-          nodes {
-            ... on ConnectedEvent {
-              id
-              subject {
-                ... on Issue {
-                  number
-                }
-              }
-            }
-            ... on DisconnectedEvent {
-              id
-              subject {
-                ... on Issue {
-                  number
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  `);
-
-  console.log({
-    dataFromGraphQl,
-  });
+  // const pullRequestNumbers: number[] = pullRequests.map(
+  //   // @ts-ignore
+  //   (pullRequest) => pullRequest.number,
+  // );
 
   // Promise.all(
   //   pullRequestNumbers.map(async (pull_number) => {
