@@ -36,6 +36,9 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
         pull_number,
       });
 
+      console.log('ISSUE ====> ', data._links.issue);
+      console.log('ISSUE HREF====> ', data._links.issue.href);
+
       console.log({ data });
     }),
   );
