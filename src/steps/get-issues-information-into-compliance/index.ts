@@ -20,15 +20,15 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
   // linked:pr
 
   const octokit = github.getOctokit(ghToken);
-  const q = `q=SHA=${sha}+is:issue`;
+  const q = `q=SHA=${sha}`;
 
   const { data } = await octokit.rest.search.issuesAndPullRequests({
     q,
   });
 
-  console.log({ data });
+  const { items: pullRequests } = data;
 
-  // const { items: pullRequests } = data;
+  console.log({ pullRequests });
 
   // const pullRequestNumbers: number[] = pullRequests.map(
   //   // @ts-ignore
