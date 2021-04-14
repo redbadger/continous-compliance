@@ -20,6 +20,7 @@ interface GitHubEvidence {
 }
 
 const githubFolder = `${COMPLIANCE_FOLDER}/github`;
+const githubInfoPath = `${githubFolder}/info.json`;
 
 let gitEvidence: GitHubEvidence = {
   pull_request: undefined,
@@ -89,7 +90,7 @@ const getCommitsByPr = async ({
 
 const writeGhInfoIntoDisk = async () => {
   try {
-    await writeFile(JSON.stringify(gitEvidence), githubFolder);
+    await writeFile(githubInfoPath, JSON.stringify(gitEvidence));
   } catch (error) {
     throw error;
   }
