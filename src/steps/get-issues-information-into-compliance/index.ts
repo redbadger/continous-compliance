@@ -22,26 +22,21 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
   const octokit = github.getOctokit(ghToken);
   const q = `q=SHA=${sha}`;
 
-  const { data } = await octokit.rest.search.issuesAndPullRequests({
+  const { data: prs } = await octokit.rest.search.issuesAndPullRequests({
     q,
   }); // PR
 
-  const { items: pullRequests } = data;
-
-  console.log({ pullRequests });
-
-  const issuesQ = `repo:${owner}/${repo} is:open linked:pr`;
+  // octokit.rest.pulls.listCommits({
+  //   owner,
+  //   repo,
+  //   pull_number,
+  // });
 
   const {
-    data: issuesLinkedToPRs,
-  } = await octokit.rest.search.issuesAndPullRequests({
-    q: issuesQ,
-  }); // issues
+    items: [pull_request],
+  } = prs;
 
-  const { items } = issuesLinkedToPRs;
-
-  console.log({ issuesLinkedToPRs });
-  console.log({ items });
+  console.log({ pull_request });
 
   // const pullRequestNumbers: number[] = pullRequests.map(
   //   // @ts-ignore
