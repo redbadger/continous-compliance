@@ -21,9 +21,24 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
     q,
   });
 
-  const { items } = data;
+  const { items: pullRequests } = data;
 
-  console.log({ data, items });
+  const pullRequestNumbers: number[] = pullRequests.map(
+    // @ts-ignore
+    (pullRequest) => pullRequest.number,
+  );
+
+  Promise.all(
+    pullRequestNumbers.map(async (pull_number) => {
+      const { data } = await octokit.pulls.get({
+        owner,
+        repo,
+        pull_number,
+      });
+
+      console.log({ data });
+    }),
+  );
 };
 
 export default getIssuesInformationIntoCompliance;
