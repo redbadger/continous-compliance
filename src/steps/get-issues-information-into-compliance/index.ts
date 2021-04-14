@@ -38,7 +38,10 @@ const getIssuesInformationIntoCompliance = async (): Promise<void> => {
     q,
   }); // issues
 
+  const { items } = issuesLinkedToPRs;
+
   console.log({ issuesLinkedToPRs });
+  console.log({ items });
 
   // const pullRequestNumbers: number[] = pullRequests.map(
   //   // @ts-ignore
