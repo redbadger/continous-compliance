@@ -82,8 +82,10 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(infoSpy).toHaveBeenCalledTimes(0);
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
+    // Call
     await getPrInformationIntoComplianceFolder();
 
+    // Positive assertions
     expect(getInputSpy).toBeCalledWith('github-token');
     expect(getOctokitSpy).toBeCalledWith(ghToken);
     expect(getPullRequestByCommitSHASpy).toBeCalledWith({
@@ -123,5 +125,52 @@ describe('getPrInformationIntoComplianceFolder', () => {
       4,
       'Saving GitHub evidence on compliance/github/info.json',
     );
+  });
+
+  it('should do nothing if input "github-token" is not set', async () => {
+    const ghToken = '';
+    jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => ghToken));
+    jest.spyOn(promises, 'writeFile').mockImplementation(jest.fn());
+    jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
+    jest.spyOn(helperFunctions, 'getCommitsByPr');
+    jest.spyOn(helperFunctions, 'writeGhInfoIntoDisk');
+
+    const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const infoSpy = core.info as jest.Mock<any, any>;
+    const warningSpy = core.warning as jest.Mock<any, any>;
+    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
+    const getPullRequestByCommitSHASpy = helperFunctions.getPullRequestByCommitSHA as jest.Mock<
+      any,
+      any
+    >;
+    const getCommitsByPrSpy = helperFunctions.getCommitsByPr as jest.Mock<
+      any,
+      any
+    >;
+    const writeGhInfoIntoDisk = helperFunctions.writeGhInfoIntoDisk as jest.Mock<
+      any,
+      any
+    >;
+
+    // sanity check
+    expect(getInputSpy).toHaveBeenCalledTimes(0);
+    expect(getOctokitSpy).toHaveBeenCalledTimes(0);
+    expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
+    expect(getCommitsByPrSpy).toHaveBeenCalledTimes(0);
+    expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(0);
+    expect(infoSpy).toHaveBeenCalledTimes(0);
+    expect(warningSpy).toHaveBeenCalledTimes(0);
+
+    // Call
+    await getPrInformationIntoComplianceFolder();
+
+    // Positive assertions
+    expect(getInputSpy).toHaveBeenCalledTimes(1);
+    expect(getOctokitSpy).not.toHaveBeenCalled();
+    expect(getPullRequestByCommitSHASpy).not.toHaveBeenCalled();
+    expect(getCommitsByPrSpy).not.toHaveBeenCalled();
+    expect(writeGhInfoIntoDisk).not.toHaveBeenCalled();
+    expect(infoSpy).not.toHaveBeenCalled();
+    expect(warningSpy).not.toHaveBeenCalled();
   });
 });

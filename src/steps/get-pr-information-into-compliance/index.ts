@@ -28,37 +28,43 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
       },
     } = github;
 
-    // Get PR by commit SHA
-    const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
+    try {
+      // Get PR by commit SHA
+      const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
-    if (pull_request) {
-      // Create github folder and write to disk
-      await io.mkdirP(githubFolder);
-      gitEvidence = { ...gitEvidence, pull_request };
-      await writeGhInfoIntoDisk(gitEvidence);
-
-      const { number: pull_number } = pull_request;
-      core.info(`Gathering information about PR #${pull_number}`);
-
-      // Get commits by PR number
-      const commits = await getCommitsByPr({
-        octokit,
-        owner,
-        repo,
-        pull_number,
-      });
-
-      if (commits) {
-        gitEvidence = { ...gitEvidence, commits };
-        core.info(
-          `Gathering information about commits associated with PR #${pull_number} 📝`,
-        );
+      if (pull_request) {
+        // Create github folder and write to disk
+        await io.mkdirP(githubFolder);
+        gitEvidence = { ...gitEvidence, pull_request };
         await writeGhInfoIntoDisk(gitEvidence);
+
+        const { number: pull_number } = pull_request;
+        core.info(`Gathering information about PR #${pull_number}`);
+
+        // Get commits by PR number
+        const commits = await getCommitsByPr({
+          octokit,
+          owner,
+          repo,
+          pull_number,
+        });
+
+        if (commits) {
+          gitEvidence = { ...gitEvidence, commits };
+          core.info(
+            `Gathering information about commits associated with PR #${pull_number} 📝`,
+          );
+          await writeGhInfoIntoDisk(gitEvidence);
+        } else {
+          core.warning(`No commits associated with PR #${pull_number}`);
+        }
       } else {
-        core.warning(`No commits associated with PR #${pull_number}`);
+        core.warning(`Pull request associated with commit ${sha} not found`);
       }
-    } else {
-      core.warning(`Pull request associated with commit ${sha} not found`);
+    } catch (error) {
+      throw new Error(
+        `Failed to get information from GitHub API, ${error.message}`,
+      );
     }
   } else {
     return;
