@@ -1,24 +1,83 @@
-# Continous Compliance
+# Continous Compliance GitHub Action
 
-## What is it
+This GitHub Action will automatically gather compliance information about:
 
-GitHub Action that gather compliance evidence and store it in the cloud
+- Documentation
+- Test results
+- GitHub pull request information and commits associated
 
-## Inputs
+And store it in a Google Cloud Storage bucket as evidence for regulators.
 
-- `tests-folder`: path to tests folder
+## Getting started
 
-## Outputs
+You can include the action in your workflow to trigger on any event that GitHub actions supports. Your workflow will need to include the actions/checkout step before this workflow runs in order for gather the evidence
 
-- `compliance-evidence-url`: URL where we store it compliance evidence
-
-## Example usage
+You can view an example of this below.
 
 ```yml
-uses: redbadger/continous-compliance@v0.1
-width:
-  tests-folder: 'path-to-tests-folder'
+name: Continous compliance 🔍
+on:
+  push:
+    branches:
+      - master
+jobs:
+  continous-compliance:
+    runs-on: ubuntu-latest
+    name: Continous compliance 🔍
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Set Node version 📦
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          check-latest: true
+
+      - name: Install 🏗
+        run: |
+          yarn
+
+      - name: Gather test results 🗃 🧪
+        run: |
+          yarn workspace web test:ci-report
+          yarn workspace web test:accessibility
+          yarn workspace web test:e2e
+
+      - name: Continous compliance
+        uses: redbadger/continous-compliance@v0.7
+        with:
+          tests-folder: web/test-results
+          gcp-bucket-name: count-dracula-continous-compliance-prod
+          gcp-application-credentials: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          docs-folder: web/docs
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+## Configuration
+
+The `with` portion of the workflow must be configured before the action will work. You can add these in the with section found in the examples above. Any `secrets` must be referenced using the bracket syntax and stored in the GitHub repository's `Settings/Secrets` menu. You can learn more about setting environment variables with GitHub actions here.
+
+### Required Setup
+
+The following options must be configured in order to make a deployment.
+
+| Key                           | Value Information                                                                                                                                                                                                                                                                                | Type    | Required |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | -------- |
+| `gcp-bucket-name`             | Google Cloud storage bucket name where compliance information will be stored                                                                                                                                                                                                                     | `width` | **Yes**  |
+| `gcp-application-credentials` | To authorize in GCP you need to have a [service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey). The recommended way to store the credentials in the secrets it previously encode file with `base64`. To encode a JSON file use: `base64 ~/<account_id>.json`. | `width` | **Yes**  |
+
+### Optional Setup
+
+The following options are optional
+
+| Key            | Value Information                                                                                                             | Type    | Required |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------- | -------- |
+| `github-token` | To have the ability to gather evidence from GitHub API, you can enable it setting the GitHub token provided repository scoped | `width` | **No**   |
+| `tests-folder` | Folder where test results are stored                                                                                          | `width` | **No**   |
+| `docs-folder`  | Folder where documentation is stored                                                                                          | `width` | **No**   |
 
 ## What it does
 
