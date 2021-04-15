@@ -32,13 +32,13 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
     const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
     if (pull_request) {
-      // Create github folder
+      // Create github folder and write to disk
       await io.mkdirP(githubFolder);
-
       gitEvidence = { ...gitEvidence, pull_request };
-      const { number: pull_number } = pull_request;
+      await writeGhInfoIntoDisk(gitEvidence);
 
-      core.info(`Gathering information about PR #${pull_number} :octocat:`);
+      const { number: pull_number } = pull_request;
+      core.info(`Gathering information about PR #${pull_number}`);
 
       // Get commits by PR number
       const commits = await getCommitsByPr({
@@ -53,10 +53,10 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
         core.info(
           `Gathering information about commits associated with PR #${pull_number} 📝`,
         );
+        await writeGhInfoIntoDisk(gitEvidence);
       } else {
         core.warning(`No commits associated with PR #${pull_number}`);
       }
-      await writeGhInfoIntoDisk(gitEvidence);
     } else {
       core.warning(`Pull request associated with commit ${sha} not found`);
     }
