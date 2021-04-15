@@ -1,13 +1,13 @@
-import * as github from '@actions/github';
-import * as core from '@actions/core';
-import * as io from '@actions/io';
-import { GitHub } from '@actions/github/lib/utils';
 import { COMPLIANCE_FOLDER } from '../../shared/constants';
-import * as fs from 'fs';
+import { GitHub } from '@actions/github/lib/utils';
 import { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods';
+import * as core from '@actions/core';
+import * as fs from 'fs';
+import * as github from '@actions/github';
+import * as io from '@actions/io';
 
-type PullRequestSearchResponse = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response'];
 type PullRequestListCommitsResponse = RestEndpointMethodTypes['pulls']['listCommits']['response'];
+type PullRequestSearchResponse = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response'];
 type PullRequestSearchResponseItem = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response']['data']['items'][number];
 
 // TODO:
@@ -90,6 +90,7 @@ const getCommitsByPr = async ({
 
 const writeGhInfoIntoDisk = async () => {
   try {
+    core.info(`Saving GitHub evidence on ${githubInfoPath}`);
     await writeFile(githubInfoPath, JSON.stringify(gitEvidence));
   } catch (error) {
     throw error;
@@ -119,6 +120,8 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
       gitEvidence = { ...gitEvidence, pull_request };
       const { number: pull_number } = pull_request;
 
+      core.info(`Gathering information about PR #${pull_number} :octocat:`);
+
       // Get commits by PR number
       const commits = await getCommitsByPr({
         octokit,
@@ -129,6 +132,9 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
 
       if (commits) {
         gitEvidence = { ...gitEvidence, commits };
+        core.info(
+          `Gathering information about commits associated with PR #${pull_number} 📝`,
+        );
         await writeGhInfoIntoDisk();
       } else {
         await writeGhInfoIntoDisk();
