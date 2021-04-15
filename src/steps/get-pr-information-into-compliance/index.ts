@@ -53,9 +53,7 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
         core.info(
           `Gathering information about commits associated with PR #${pull_number} 📝`,
         );
-        // await writeGhInfoIntoDisk(gitEvidence);
       } else {
-        // await writeGhInfoIntoDisk(gitEvidence);
         core.warning(`No commits associated with PR #${pull_number}`);
       }
       await writeGhInfoIntoDisk(gitEvidence);
