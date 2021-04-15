@@ -1,107 +1,25 @@
-import { COMPLIANCE_FOLDER } from '../../shared/constants';
-import { GitHub } from '@actions/github/lib/utils';
-import { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods';
 import * as core from '@actions/core';
-import * as fs from 'fs';
 import * as github from '@actions/github';
 import * as io from '@actions/io';
 
-type PullRequestListCommitsResponse = RestEndpointMethodTypes['pulls']['listCommits']['response'];
-type PullRequestSearchResponse = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response'];
-type PullRequestSearchResponseItem = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response']['data']['items'][number];
-
-// TODO:
-// Write logs info
-// Abstract small functions to another file
-
-interface GitHubEvidence {
-  pull_request?: PullRequestSearchResponseItem;
-  commits?: PullRequestListCommitsResponse['data'];
-}
-
-const githubFolder = `${COMPLIANCE_FOLDER}/github`;
-const githubInfoPath = `${githubFolder}/info.json`;
-
-let gitEvidence: GitHubEvidence = {
-  pull_request: undefined,
-  commits: undefined,
-};
-
-interface GetPullRequestByCommitSHA {
-  octokit: InstanceType<typeof GitHub>;
-  sha: string;
-}
-
-const {
-  promises: { writeFile },
-} = fs;
-
-const getPullRequestByCommitSHA = async ({
-  octokit,
-  sha,
-}: GetPullRequestByCommitSHA) => {
-  try {
-    const q = `q=SHA=${sha}`;
-    const {
-      data: prs,
-    }: PullRequestSearchResponse = await octokit.rest.search.issuesAndPullRequests(
-      { q },
-    );
-
-    if (prs) {
-      const {
-        items: [pull_request],
-      } = prs;
-      return pull_request;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-interface GetCommitsByPr {
-  octokit: InstanceType<typeof GitHub>;
-  owner: string;
-  repo: string;
-  pull_number: number;
-}
-
-const getCommitsByPr = async ({
-  octokit,
-  owner,
-  repo,
-  pull_number,
-}: GetCommitsByPr) => {
-  try {
-    const {
-      data: commits,
-    }: PullRequestListCommitsResponse = await octokit.rest.pulls.listCommits({
-      owner,
-      repo,
-      pull_number,
-    });
-    if (commits) {
-      return commits;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-const writeGhInfoIntoDisk = async () => {
-  try {
-    core.info(`Saving GitHub evidence on ${githubInfoPath}`);
-    await writeFile(githubInfoPath, JSON.stringify(gitEvidence));
-  } catch (error) {
-    throw error;
-  }
-};
+import {
+  getCommitsByPr,
+  getPullRequestByCommitSHA,
+  githubFolder,
+  GitHubEvidence,
+  writeGhInfoIntoDisk,
+} from './helper';
 
 const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
+  let gitEvidence: GitHubEvidence = {
+    pull_request: undefined,
+    commits: undefined,
+  };
   const ghToken = core.getInput('github-token');
   const isGhToken = Boolean(ghToken);
 
   if (isGhToken) {
+    // Intantiate GH API Client
     const octokit = github.getOctokit(ghToken);
     const {
       context: {
@@ -135,11 +53,12 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
         core.info(
           `Gathering information about commits associated with PR #${pull_number} 📝`,
         );
-        await writeGhInfoIntoDisk();
+        // await writeGhInfoIntoDisk(gitEvidence);
       } else {
-        await writeGhInfoIntoDisk();
+        // await writeGhInfoIntoDisk(gitEvidence);
         core.warning(`No commits associated with PR #${pull_number}`);
       }
+      await writeGhInfoIntoDisk(gitEvidence);
     } else {
       core.warning(`Pull request associated with commit ${sha} not found`);
     }
