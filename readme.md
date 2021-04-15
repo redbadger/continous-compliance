@@ -6,7 +6,7 @@ This GitHub Action will automatically gather compliance information about:
 - Test results
 - GitHub pull request information and commits associated
 
-And stored in a Google Cloud Storage bucket for future reference for regulators.
+And store it in a Google Cloud Storage bucket as evidence for regulators.
 
 ## Getting started
 
