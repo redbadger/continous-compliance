@@ -63,7 +63,7 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
       }
     } catch (error) {
       throw new Error(
-        `Failed to get information from GitHub API, ${error.message}`,
+        `Failed to gather evidence from GitHub API, ${error.message}`,
       );
     }
   } else {
