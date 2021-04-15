@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import * as fs from 'fs';
+import * as io from '@actions/io';
 
 import getPrInformationIntoComplianceFolder from './index';
 import * as helperFunctions from './helper';
@@ -50,16 +51,21 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
   it('should gather information from GH and save it on compliance folder', async () => {
     const ghToken = 'IamAToken';
+
     jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => ghToken));
-    jest.spyOn(promises, 'writeFile').mockImplementation(jest.fn());
+    jest.spyOn(io, 'mkdirP').mockImplementation(jest.fn());
     jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
+    jest.spyOn(promises, 'writeFile');
     jest.spyOn(helperFunctions, 'getCommitsByPr');
-    jest.spyOn(helperFunctions, 'writeGhInfoIntoDisk');
+    jest
+      .spyOn(helperFunctions, 'writeGhInfoIntoDisk')
+      .mockImplementation(jest.fn());
 
     const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
+    const mkdirPSpy = io.mkdirP as jest.Mock<any, any>;
     const infoSpy = core.info as jest.Mock<any, any>;
     const warningSpy = core.warning as jest.Mock<any, any>;
-    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
     const getPullRequestByCommitSHASpy = helperFunctions.getPullRequestByCommitSHA as jest.Mock<
       any,
       any
@@ -74,6 +80,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
     >;
 
     // sanity check
+    expect(mkdirPSpy).toHaveBeenCalledTimes(0);
     expect(getInputSpy).toHaveBeenCalledTimes(0);
     expect(getOctokitSpy).toHaveBeenCalledTimes(0);
     expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
@@ -92,6 +99,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
       octokit: mockedOktokit,
       sha: 'iamacommitsha',
     });
+    expect(mkdirPSpy).toBeCalledWith('compliance/github');
     expect(getCommitsByPrSpy).toBeCalledWith({
       octokit: mockedOktokit,
       owner: 'owner',
@@ -108,37 +116,33 @@ describe('getPrInformationIntoComplianceFolder', () => {
       pull_request: { number: 36 },
     });
     expect(warningSpy).toHaveBeenCalledTimes(0);
-    expect(infoSpy).toHaveBeenCalledTimes(4);
+    expect(infoSpy).toHaveBeenCalledTimes(2);
     expect(infoSpy).toHaveBeenNthCalledWith(
       1,
-      'Saving GitHub evidence on compliance/github/info.json',
-    );
-    expect(infoSpy).toHaveBeenNthCalledWith(
-      2,
       'Gathering information about PR #36',
     );
     expect(infoSpy).toHaveBeenNthCalledWith(
-      3,
+      2,
       'Gathering information about commits associated with PR #36 📝',
-    );
-    expect(infoSpy).toHaveBeenNthCalledWith(
-      4,
-      'Saving GitHub evidence on compliance/github/info.json',
     );
   });
 
   it('should do nothing if input "github-token" is not set', async () => {
     const ghToken = '';
     jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => ghToken));
-    jest.spyOn(promises, 'writeFile').mockImplementation(jest.fn());
+    jest.spyOn(io, 'mkdirP').mockImplementation(jest.fn());
     jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
+    jest.spyOn(promises, 'writeFile');
     jest.spyOn(helperFunctions, 'getCommitsByPr');
-    jest.spyOn(helperFunctions, 'writeGhInfoIntoDisk');
+    jest
+      .spyOn(helperFunctions, 'writeGhInfoIntoDisk')
+      .mockImplementation(jest.fn());
 
     const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
+    const mkdirPSpy = io.mkdirP as jest.Mock<any, any>;
     const infoSpy = core.info as jest.Mock<any, any>;
     const warningSpy = core.warning as jest.Mock<any, any>;
-    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
     const getPullRequestByCommitSHASpy = helperFunctions.getPullRequestByCommitSHA as jest.Mock<
       any,
       any
@@ -153,6 +157,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
     >;
 
     // sanity check
+    expect(mkdirPSpy).toHaveBeenCalledTimes(0);
     expect(getInputSpy).toHaveBeenCalledTimes(0);
     expect(getOctokitSpy).toHaveBeenCalledTimes(0);
     expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
@@ -164,8 +169,12 @@ describe('getPrInformationIntoComplianceFolder', () => {
     // Call
     await getPrInformationIntoComplianceFolder();
 
+    // Call
+    await getPrInformationIntoComplianceFolder();
+
     // Positive assertions
-    expect(getInputSpy).toHaveBeenCalledTimes(1);
+    expect(getInputSpy).toHaveBeenCalled();
+    expect(mkdirPSpy).not.toHaveBeenCalled();
     expect(getOctokitSpy).not.toHaveBeenCalled();
     expect(getPullRequestByCommitSHASpy).not.toHaveBeenCalled();
     expect(getCommitsByPrSpy).not.toHaveBeenCalled();
