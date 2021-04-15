@@ -33,7 +33,9 @@ export const getPullRequestByCommitSHA = async ({
       return pull_request;
     }
   } catch (error) {
-    throw error;
+    throw new Error(
+      `Failed to get a pull request information from commit ${sha}`,
+    );
   }
 };
 
@@ -62,7 +64,9 @@ export const getCommitsByPr = async ({
       return commits;
     }
   } catch (error) {
-    throw error;
+    throw new Error(
+      `Failed to get commits information from pull request # ${pull_number}`,
+    );
   }
 };
 
@@ -83,6 +87,6 @@ export const writeGhInfoIntoDisk = async (gitEvidence: GitHubEvidence) => {
     core.info(`Saving GitHub evidence on ${githubInfoPath}`);
     await writeFile(githubInfoPath, JSON.stringify(gitEvidence));
   } catch (error) {
-    throw error;
+    throw new Error(`Failed to save GitHub evidence on ${githubInfoPath}`);
   }
 };
