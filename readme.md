@@ -58,11 +58,11 @@ jobs:
 
 ## Configuration
 
-The `with` portion of the workflow must be configured before the action will work. You can add these in the with section found in the examples above. Any `secrets` must be referenced using the bracket syntax and stored in the GitHub repository's `Settings/Secrets` menu. You can learn more about setting environment variables with GitHub actions here.
+The `with` portion of the workflow must be configured before the action will work. You can add these in the with section found in the examples above. Any `secrets` must be referenced using the bracket syntax and stored in the GitHub repository's `Settings/Secrets` menu. You can learn more about setting environment variables with GitHub actions [here](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets).
 
 ### Required Setup
 
-The following options must be configured in order to make a deployment.
+The following options must be configured in order to save evidence on Google Cloud Storage.
 
 | Key                           | Value Information                                                                                                                                                                                                                                                                                | Type    | Required |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | -------- |
