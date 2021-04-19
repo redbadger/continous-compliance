@@ -17,7 +17,6 @@ const prettierOptions: prettier.Options = {
   semi: false,
   singleQuote: true,
   parser: 'json-stringify',
-  // parser: 'babel',
 };
 
 interface JsonToTxt {
@@ -32,11 +31,8 @@ const jsonToTxt = async ({
   try {
     const data = await readFile(jsonFilePath);
 
-    const raw = prettier.format(data.toString('utf8').trim(), prettierOptions);
-
-    console.log({ raw });
-
-    const txt = raw
+    const txt = prettier
+      .format(data.toString('utf8').trim(), prettierOptions)
       .replace(doubleQuotes, '')
       .replace(curlyBraces, '')
       .replace(squareBraces, '')

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import jsonToTxt from './index';
 
+jest.mock('prettier');
 jest.mock('fs', () => ({
   promises: {
     writeFile: jest.fn().mockResolvedValue(jest.fn()),
