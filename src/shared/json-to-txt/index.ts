@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import * as prettier from 'prettier';
+
 const {
   promises: { readFile, writeFile },
 } = fs;
@@ -20,9 +22,8 @@ const jsonToTxt = async ({
   try {
     const data = await readFile(jsonFilePath);
 
-    const txt = data
-      .toString('utf8')
-      .trim()
+    const txt = prettier
+      .format(data.toString('utf8').trim())
       .replace(doubleQuotes, '')
       .replace(curlyBraces, '')
       .replace(squareBraces, '')
