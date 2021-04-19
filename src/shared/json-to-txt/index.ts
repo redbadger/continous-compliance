@@ -9,6 +9,7 @@ const doubleQuotes = /(\")/gm;
 const curlyBraces = /(\{|\})/gm;
 const squareBraces = /(\[|\])/gm;
 const commas = /(\,)/gm;
+const semiColon = /(\;)/gm;
 
 interface JsonToTxt {
   jsonFilePath: string;
@@ -27,7 +28,8 @@ const jsonToTxt = async ({
       .replace(doubleQuotes, '')
       .replace(curlyBraces, '')
       .replace(squareBraces, '')
-      .replace(commas, '');
+      .replace(commas, '')
+      .replace(semiColon, '');
 
     await writeFile(txtFilePath, txt);
   } catch (error) {
