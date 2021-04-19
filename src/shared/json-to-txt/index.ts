@@ -16,6 +16,8 @@ const prettierOptions: prettier.Options = {
   tabWidth: 2,
   semi: false,
   singleQuote: true,
+  parser: 'json-stringify',
+  // parser: 'babel',
 };
 
 interface JsonToTxt {
