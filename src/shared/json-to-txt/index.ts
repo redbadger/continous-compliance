@@ -11,6 +11,13 @@ const squareBraces = /(\[|\])/gm;
 const commas = /(\,)/gm;
 const semiColon = /(\;)/gm;
 
+const prettierOptions: prettier.Options = {
+  trailingComma: 'all',
+  tabWidth: 2,
+  semi: false,
+  singleQuote: true,
+};
+
 interface JsonToTxt {
   jsonFilePath: string;
   txtFilePath: string;
@@ -23,8 +30,11 @@ const jsonToTxt = async ({
   try {
     const data = await readFile(jsonFilePath);
 
-    const txt = prettier
-      .format(data.toString('utf8').trim())
+    const raw = prettier.format(data.toString('utf8').trim(), prettierOptions);
+
+    console.log({ raw });
+
+    const txt = raw
       .replace(doubleQuotes, '')
       .replace(curlyBraces, '')
       .replace(squareBraces, '')
