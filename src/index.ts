@@ -6,6 +6,7 @@ import createComplianceFolder from './steps/create-compliance-folder';
 import storeCompressedComplianceFolderInABucket from './steps/store-compressed-compliance-folder-in-a-bucket';
 import copyDocFolderIntoCompliance from './steps/copy-doc-folder-into-compliance';
 import getPrInformationIntoCompliance from './steps/get-pr-information-into-compliance';
+import createTxtFiles from './steps/create-txt-files';
 
 const start = async (): Promise<void> => {
   try {
@@ -13,6 +14,7 @@ const start = async (): Promise<void> => {
     await copyTestFolderIntoCompliance();
     await copyDocFolderIntoCompliance();
     await getPrInformationIntoCompliance();
+    await createTxtFiles();
     await compressComplianceFolder();
     await storeCompressedComplianceFolderInABucket();
   } catch (error) {
