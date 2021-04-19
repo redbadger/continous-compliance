@@ -5,10 +5,13 @@ jest.mock('fs', () => ({
   promises: {
     writeFile: jest.fn().mockResolvedValue(jest.fn()),
     readFile: jest.fn().mockResolvedValue(
-      JSON.stringify({
-        name: 'pedro',
-        fruits: ['banana', 'apple'],
-      }),
+      Buffer.from(
+        JSON.stringify({
+          name: 'pedro',
+          fruits: ['banana', 'apple'],
+        }),
+        'utf-8',
+      ),
     ),
   },
 }));
