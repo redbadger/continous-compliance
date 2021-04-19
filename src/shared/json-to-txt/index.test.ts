@@ -1,7 +1,15 @@
 import * as fs from 'fs';
 import jsonToTxt from './index';
 
-jest.mock('prettier');
+jest.mock('prettier', () => ({
+  format: jest.fn().mockImplementation(() =>
+    JSON.stringify({
+      name: 'pedro',
+      fruits: ['banana', 'apple'],
+    }),
+  ),
+}));
+
 jest.mock('fs', () => ({
   promises: {
     writeFile: jest.fn().mockResolvedValue(jest.fn()),
