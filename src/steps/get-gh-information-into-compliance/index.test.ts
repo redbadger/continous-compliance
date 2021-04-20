@@ -191,9 +191,6 @@ describe('getGhInformationIntoComplianceFolder', () => {
     // Call
     await getGhInformationIntoComplianceFolder();
 
-    // Call
-    await getGhInformationIntoComplianceFolder();
-
     // Positive assertions
     expect(getInputSpy).toHaveBeenCalled();
     expect(mkdirPSpy).not.toHaveBeenCalled();
