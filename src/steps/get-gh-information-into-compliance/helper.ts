@@ -8,6 +8,7 @@ import { COMPLIANCE_FOLDER } from '../../shared/constants';
 type PullRequestListCommitsResponse = RestEndpointMethodTypes['pulls']['listCommits']['response'];
 type PullRequestSearchResponse = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response'];
 type PullRequestSearchResponseItem = RestEndpointMethodTypes['search']['issuesAndPullRequests']['response']['data']['items'][number];
+type Issues = RestEndpointMethodTypes['issues']['get']['response']['data'];
 
 interface GetPullRequestByCommitSHA {
   octokit: InstanceType<typeof GitHub>;
@@ -73,6 +74,7 @@ export const getCommitsByPr = async ({
 export interface GitHubEvidence {
   pull_request?: PullRequestSearchResponseItem;
   commits?: PullRequestListCommitsResponse['data'];
+  issues?: Issues[];
 }
 
 export const githubFolder = `${COMPLIANCE_FOLDER}/github`;
@@ -88,5 +90,46 @@ export const writeGhInfoIntoDisk = async (gitEvidence: GitHubEvidence) => {
     await writeFile(githubInfoPath, JSON.stringify(gitEvidence));
   } catch (error) {
     throw new Error(`Failed to save GitHub evidence on ${githubInfoPath}`);
+  }
+};
+
+interface GetIssues {
+  octokit: InstanceType<typeof GitHub>;
+  owner: string;
+  repo: string;
+  pull_request: PullRequestSearchResponseItem;
+}
+
+export const getIssues = async ({
+  octokit,
+  owner,
+  repo,
+  pull_request,
+}: GetIssues): Promise<Issues[] | undefined> => {
+  try {
+    const pullRequestHaveBody = Boolean(pull_request.body);
+
+    if (pullRequestHaveBody) {
+      const issuesMatcher = /(#\d*)/gim;
+      // TS complained that matchAll is not part of ES2019 and it is
+      // https://node.green/#ES2019-features-String-prototype-matchAll
+      // @ts-ignore
+      const matches = [...pull_request.body.matchAll(issuesMatcher)];
+      const issues = matches.map((match) => Number(match[0].split('#').pop()));
+      return await Promise.all(
+        issues.map(async (issue_number) => {
+          const { data } = await octokit.issues.get({
+            owner,
+            repo,
+            issue_number,
+          });
+          return data;
+        }),
+      );
+    }
+  } catch (error) {
+    throw new Error(`
+      Failed to get issues from pull resquest ${pull_request.number}
+    `);
   }
 };

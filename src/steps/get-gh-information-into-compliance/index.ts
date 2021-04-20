@@ -5,9 +5,10 @@ import * as util from 'util';
 
 import {
   getCommitsByPr,
+  getIssues,
   getPullRequestByCommitSHA,
-  githubFolder,
   GitHubEvidence,
+  githubFolder,
   writeGhInfoIntoDisk,
 } from './helper';
 
@@ -15,6 +16,7 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
   let gitEvidence: GitHubEvidence = {
     pull_request: undefined,
     commits: undefined,
+    issues: undefined,
   };
   const ghToken = core.getInput('github-token');
   const isGhToken = Boolean(ghToken);
@@ -35,35 +37,17 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
       const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
       if (pull_request) {
-        const pullRequestHaveBody = Boolean(pull_request.body);
-
-        if (pullRequestHaveBody) {
-          const issuesMatcher = /(#\d*)/gim;
-          // @ts-ignore
-          const matches = [...pull_request.body.matchAll(issuesMatcher)];
-          const issues = matches.map((match) =>
-            Number(match[0].split('#').pop()),
-          );
-
-          const issuesInfo = await Promise.all(
-            issues.map(async (issue_number) => {
-              const { data: issueInfo } = await octokit.issues.get({
-                owner,
-                repo,
-                issue_number,
-              });
-              return issueInfo;
-            }),
-          );
-
-          console.log({
-            issuesInfo,
-          });
-        }
-
-        // Create github folder and write to disk
         await io.mkdirP(githubFolder);
-        gitEvidence = { ...gitEvidence, pull_request };
+
+        const issues = await getIssues({
+          octokit,
+          owner,
+          repo,
+          pull_request,
+        });
+        // Create github folder and write to disk
+
+        gitEvidence = { ...gitEvidence, pull_request, issues };
         await writeGhInfoIntoDisk(gitEvidence);
 
         const { number: pull_number } = pull_request;
