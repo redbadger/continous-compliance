@@ -45,7 +45,7 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
             Number(match[0].split('#').pop()),
           );
 
-          const issuesInfo = Promise.all(
+          const issuesInfo = await Promise.all(
             issues.map(async (issue_number) => {
               const { data: issueInfo } = await octokit.issues.get({
                 owner,
