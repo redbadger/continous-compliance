@@ -10,7 +10,7 @@ import {
   writeGhInfoIntoDisk,
 } from './helper';
 
-const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
+const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
   let gitEvidence: GitHubEvidence = {
     pull_request: undefined,
     commits: undefined,
@@ -71,4 +71,4 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
   }
 };
 
-export default getPrInformationIntoComplianceFolder;
+export default getGhInformationIntoComplianceFolder;

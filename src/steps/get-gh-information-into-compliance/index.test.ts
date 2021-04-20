@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import * as fs from 'fs';
 import * as io from '@actions/io';
 
-import getPrInformationIntoComplianceFolder from './index';
+import getGhInformationIntoComplianceFolder from './index';
 import * as helperFunctions from './helper';
 
 const { promises } = fs;
@@ -38,7 +38,7 @@ jest.mock('@actions/github', () => ({
   },
 }));
 
-describe('getPrInformationIntoComplianceFolder', () => {
+describe('getGhInformationIntoComplianceFolder', () => {
   beforeEach(() => {
     // Prevent console.logs
     jest.spyOn(core, 'info').mockImplementation(jest.fn());
@@ -90,7 +90,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
     // Call
-    await getPrInformationIntoComplianceFolder();
+    await getGhInformationIntoComplianceFolder();
 
     // Positive assertions
     expect(getInputSpy).toBeCalledWith('github-token');
@@ -167,10 +167,10 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
     // Call
-    await getPrInformationIntoComplianceFolder();
+    await getGhInformationIntoComplianceFolder();
 
     // Call
-    await getPrInformationIntoComplianceFolder();
+    await getGhInformationIntoComplianceFolder();
 
     // Positive assertions
     expect(getInputSpy).toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -239,7 +239,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
         sha: 'iamacommitsha',
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
@@ -292,7 +292,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -307,7 +307,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
         pull_request: { number: 36 },
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
@@ -360,7 +360,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -381,7 +381,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
         pull_number: 36,
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
