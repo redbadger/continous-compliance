@@ -45,7 +45,20 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
             Number(match[0].split('#').pop()),
           );
 
-          console.log({ issues });
+          const issuesInfo = Promise.all(
+            issues.map(async (issue_number) => {
+              const { data: issueInfo } = await octokit.issues.get({
+                owner,
+                repo,
+                issue_number,
+              });
+              return issueInfo;
+            }),
+          );
+
+          console.log({
+            issuesInfo,
+          });
         }
 
         // Create github folder and write to disk
