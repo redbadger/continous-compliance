@@ -115,9 +115,12 @@ export const getIssues = async ({
       // https://node.green/#ES2019-features-String-prototype-matchAll
       // @ts-ignore
       const matches = [...pull_request.body.matchAll(issuesMatcher)];
-      const issues = matches.map((match) => Number(match[0].split('#').pop()));
+      const issuesNumbers = matches.map((match) =>
+        Number(match[0].split('#').pop()),
+      );
+
       return await Promise.all(
-        issues.map(async (issue_number) => {
+        issuesNumbers.map(async (issue_number) => {
           const { data } = await octokit.issues.get({
             owner,
             repo,

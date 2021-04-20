@@ -16,6 +16,7 @@ const mockedOktokit = {
           items: [
             {
               number: 36,
+              body: 'closes #1 \n closes #2',
             },
           ],
         },
@@ -24,6 +25,15 @@ const mockedOktokit = {
     pulls: {
       listCommits: jest.fn(() => ({ data: ['bananas', 'oranges'] })),
     },
+  },
+  issues: {
+    get: jest.fn(async () => ({
+      data: {
+        id: 862547128,
+        number: 49,
+        title: 'Mock issue 1',
+      },
+    })),
   },
 };
 
@@ -57,6 +67,7 @@ describe('getGhInformationIntoComplianceFolder', () => {
     jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
     jest.spyOn(promises, 'writeFile');
     jest.spyOn(helperFunctions, 'getCommitsByPr');
+    jest.spyOn(helperFunctions, 'getIssues');
     jest
       .spyOn(helperFunctions, 'writeGhInfoIntoDisk')
       .mockImplementation(jest.fn());
@@ -78,6 +89,7 @@ describe('getGhInformationIntoComplianceFolder', () => {
       any,
       any
     >;
+    const getIssuesSpy = helperFunctions.getIssues as jest.Mock<any, any>;
 
     // sanity check
     expect(mkdirPSpy).toHaveBeenCalledTimes(0);
@@ -86,6 +98,7 @@ describe('getGhInformationIntoComplianceFolder', () => {
     expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
     expect(getCommitsByPrSpy).toHaveBeenCalledTimes(0);
     expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(0);
+    expect(getIssuesSpy).toHaveBeenCalledTimes(0);
     expect(infoSpy).toHaveBeenCalledTimes(0);
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
@@ -109,11 +122,20 @@ describe('getGhInformationIntoComplianceFolder', () => {
     expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(2);
     expect(writeGhInfoIntoDisk).toHaveBeenNthCalledWith(1, {
       commits: undefined,
-      pull_request: { number: 36 },
+      pull_request: { number: 36, body: 'closes #1 \n closes #2' },
+      issues: [
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+      ],
     });
+
     expect(writeGhInfoIntoDisk).toHaveBeenNthCalledWith(2, {
       commits: ['bananas', 'oranges'],
-      pull_request: { number: 36 },
+      pull_request: { number: 36, body: 'closes #1 \n closes #2' },
+      issues: [
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+      ],
     });
     expect(warningSpy).toHaveBeenCalledTimes(0);
     expect(infoSpy).toHaveBeenCalledTimes(2);

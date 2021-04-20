@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import * as io from '@actions/io';
-import * as util from 'util';
 
 import {
   getCommitsByPr,
@@ -86,10 +85,3 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
 };
 
 export default getGhInformationIntoComplianceFolder;
-
-// TODO:
-// Check context
-// Depending on context decide:
-// if PR, get PR -> commits
-// if PR body with issues, get issues
-// if not PR get commit info
