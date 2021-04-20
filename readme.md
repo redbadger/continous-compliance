@@ -4,7 +4,7 @@ This GitHub Action will automatically gather compliance information about:
 
 - Documentation
 - Test results
-- GitHub pull request information and commits associated
+- GitHub pull request information, issues and commits associated
 
 And store it in a Google Cloud Storage bucket as evidence for regulators.
 
@@ -47,7 +47,7 @@ jobs:
           yarn workspace web test:e2e
 
       - name: Continous compliance
-        uses: redbadger/continous-compliance@v0.7
+        uses: redbadger/continous-compliance@v0.9
         with:
           tests-folder: web/test-results
           gcp-bucket-name: count-dracula-continous-compliance-prod
