@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import * as fs from 'fs';
 import * as io from '@actions/io';
 
-import getPrInformationIntoComplianceFolder from './index';
+import getGhInformationIntoComplianceFolder from './index';
 import * as helperFunctions from './helper';
 
 const { promises } = fs;
@@ -16,6 +16,7 @@ const mockedOktokit = {
           items: [
             {
               number: 36,
+              body: 'closes #1 \n closes #2',
             },
           ],
         },
@@ -24,6 +25,15 @@ const mockedOktokit = {
     pulls: {
       listCommits: jest.fn(() => ({ data: ['bananas', 'oranges'] })),
     },
+  },
+  issues: {
+    get: jest.fn(async () => ({
+      data: {
+        id: 862547128,
+        number: 49,
+        title: 'Mock issue 1',
+      },
+    })),
   },
 };
 
@@ -38,7 +48,7 @@ jest.mock('@actions/github', () => ({
   },
 }));
 
-describe('getPrInformationIntoComplianceFolder', () => {
+describe('getGhInformationIntoComplianceFolder', () => {
   beforeEach(() => {
     // Prevent console.logs
     jest.spyOn(core, 'info').mockImplementation(jest.fn());
@@ -57,6 +67,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
     jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
     jest.spyOn(promises, 'writeFile');
     jest.spyOn(helperFunctions, 'getCommitsByPr');
+    jest.spyOn(helperFunctions, 'getIssues');
     jest
       .spyOn(helperFunctions, 'writeGhInfoIntoDisk')
       .mockImplementation(jest.fn());
@@ -78,6 +89,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
       any,
       any
     >;
+    const getIssuesSpy = helperFunctions.getIssues as jest.Mock<any, any>;
 
     // sanity check
     expect(mkdirPSpy).toHaveBeenCalledTimes(0);
@@ -86,11 +98,12 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
     expect(getCommitsByPrSpy).toHaveBeenCalledTimes(0);
     expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(0);
+    expect(getIssuesSpy).toHaveBeenCalledTimes(0);
     expect(infoSpy).toHaveBeenCalledTimes(0);
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
     // Call
-    await getPrInformationIntoComplianceFolder();
+    await getGhInformationIntoComplianceFolder();
 
     // Positive assertions
     expect(getInputSpy).toBeCalledWith('github-token');
@@ -109,11 +122,20 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(2);
     expect(writeGhInfoIntoDisk).toHaveBeenNthCalledWith(1, {
       commits: undefined,
-      pull_request: { number: 36 },
+      pull_request: { number: 36, body: 'closes #1 \n closes #2' },
+      issues: [
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+      ],
     });
+
     expect(writeGhInfoIntoDisk).toHaveBeenNthCalledWith(2, {
       commits: ['bananas', 'oranges'],
-      pull_request: { number: 36 },
+      pull_request: { number: 36, body: 'closes #1 \n closes #2' },
+      issues: [
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+        { id: 862547128, number: 49, title: 'Mock issue 1' },
+      ],
     });
     expect(warningSpy).toHaveBeenCalledTimes(0);
     expect(infoSpy).toHaveBeenCalledTimes(2);
@@ -167,10 +189,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
     expect(warningSpy).toHaveBeenCalledTimes(0);
 
     // Call
-    await getPrInformationIntoComplianceFolder();
-
-    // Call
-    await getPrInformationIntoComplianceFolder();
+    await getGhInformationIntoComplianceFolder();
 
     // Positive assertions
     expect(getInputSpy).toHaveBeenCalled();
@@ -229,7 +248,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -239,7 +258,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
         sha: 'iamacommitsha',
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
@@ -292,7 +311,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -307,7 +326,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
         pull_request: { number: 36 },
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
@@ -360,7 +379,7 @@ describe('getPrInformationIntoComplianceFolder', () => {
 
     try {
       // Call
-      await getPrInformationIntoComplianceFolder();
+      await getGhInformationIntoComplianceFolder();
 
       // Positive assertions
       expect(getInputSpy).toBeCalledWith('github-token');
@@ -381,11 +400,83 @@ describe('getPrInformationIntoComplianceFolder', () => {
         pull_number: 36,
       });
       expect(
-        async () => await getPrInformationIntoComplianceFolder(),
+        async () => await getGhInformationIntoComplianceFolder(),
       ).toThrow();
     } catch (error) {
       expect(error.message).toBe(
         'Failed to gather evidence from GitHub API, Failed to save GitHub evidence on compliance/github/info.json',
+      );
+    }
+  });
+
+  it('should throw an error when getIssues fails', async () => {
+    const ghToken = 'IamAToken';
+
+    jest.spyOn(core, 'getInput').mockImplementation(jest.fn(() => ghToken));
+    jest.spyOn(io, 'mkdirP').mockImplementation(jest.fn());
+    jest.spyOn(helperFunctions, 'getPullRequestByCommitSHA');
+    jest.spyOn(promises, 'writeFile');
+    jest.spyOn(helperFunctions, 'getCommitsByPr');
+    jest.spyOn(helperFunctions, 'getIssues').mockImplementation(async () => {
+      throw new Error('🤡');
+    });
+    jest.spyOn(helperFunctions, 'writeGhInfoIntoDisk');
+
+    const getInputSpy = core.getInput as jest.Mock<any, any>;
+    const getOctokitSpy = github.getOctokit as jest.Mock<any, any>;
+    const mkdirPSpy = io.mkdirP as jest.Mock<any, any>;
+    const infoSpy = core.info as jest.Mock<any, any>;
+    const warningSpy = core.warning as jest.Mock<any, any>;
+    const getPullRequestByCommitSHASpy = helperFunctions.getPullRequestByCommitSHA as jest.Mock<
+      any,
+      any
+    >;
+    const getCommitsByPrSpy = helperFunctions.getCommitsByPr as jest.Mock<
+      any,
+      any
+    >;
+    const writeGhInfoIntoDisk = helperFunctions.writeGhInfoIntoDisk as jest.Mock<
+      any,
+      any
+    >;
+    const getIssuesSpy = helperFunctions.getIssues as jest.Mock<any, any>;
+
+    // sanity check
+    expect(mkdirPSpy).toHaveBeenCalledTimes(0);
+    expect(getInputSpy).toHaveBeenCalledTimes(0);
+    expect(getOctokitSpy).toHaveBeenCalledTimes(0);
+    expect(getPullRequestByCommitSHASpy).toHaveBeenCalledTimes(0);
+    expect(getCommitsByPrSpy).toHaveBeenCalledTimes(0);
+    expect(writeGhInfoIntoDisk).toHaveBeenCalledTimes(0);
+    expect(infoSpy).toHaveBeenCalledTimes(0);
+    expect(getIssuesSpy).toHaveBeenCalledTimes(0);
+    expect(warningSpy).toHaveBeenCalledTimes(0);
+
+    try {
+      // Call
+      await getGhInformationIntoComplianceFolder();
+
+      // Positive assertions
+      expect(getInputSpy).toBeCalledWith('github-token');
+      expect(getOctokitSpy).toBeCalledWith(ghToken);
+      expect(getPullRequestByCommitSHASpy).toBeCalledWith({
+        octokit: mockedOktokit,
+        sha: 'iamacommitsha',
+      });
+      expect(getCommitsByPrSpy).toBeCalledWith({
+        octokit: mockedOktokit,
+        owner: 'owner',
+        repo: 'repo',
+        pull_number: 36,
+      });
+      expect(mkdirPSpy).toBeCalledWith('compliance/github');
+
+      expect(
+        async () => await getGhInformationIntoComplianceFolder(),
+      ).toThrow();
+    } catch (error) {
+      expect(error.message).toBe(
+        'Failed to gather evidence from GitHub API, 🤡',
       );
     }
   });

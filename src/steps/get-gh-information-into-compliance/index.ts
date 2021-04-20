@@ -4,16 +4,18 @@ import * as io from '@actions/io';
 
 import {
   getCommitsByPr,
+  getIssues,
   getPullRequestByCommitSHA,
-  githubFolder,
   GitHubEvidence,
+  githubFolder,
   writeGhInfoIntoDisk,
 } from './helper';
 
-const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
+const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
   let gitEvidence: GitHubEvidence = {
     pull_request: undefined,
     commits: undefined,
+    issues: undefined,
   };
   const ghToken = core.getInput('github-token');
   const isGhToken = Boolean(ghToken);
@@ -21,6 +23,7 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
   if (isGhToken) {
     // Intantiate GH API Client
     const octokit = github.getOctokit(ghToken);
+
     const {
       context: {
         repo: { repo, owner },
@@ -33,9 +36,17 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
       const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
       if (pull_request) {
-        // Create github folder and write to disk
         await io.mkdirP(githubFolder);
-        gitEvidence = { ...gitEvidence, pull_request };
+
+        const issues = await getIssues({
+          octokit,
+          owner,
+          repo,
+          pull_request,
+        });
+        // Create github folder and write to disk
+
+        gitEvidence = { ...gitEvidence, pull_request, issues };
         await writeGhInfoIntoDisk(gitEvidence);
 
         const { number: pull_number } = pull_request;
@@ -59,7 +70,9 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
           core.warning(`No commits associated with PR #${pull_number}`);
         }
       } else {
-        core.warning(`Pull request associated with commit ${sha} not found`);
+        core.warning(
+          `No pull request associated with commit ${sha} not found.`,
+        );
       }
     } catch (error) {
       throw new Error(
@@ -71,4 +84,4 @@ const getPrInformationIntoComplianceFolder = async (): Promise<void> => {
   }
 };
 
-export default getPrInformationIntoComplianceFolder;
+export default getGhInformationIntoComplianceFolder;

@@ -5,7 +5,7 @@ import copyTestFolderIntoCompliance from './steps/copy-test-folder-into-complian
 import createComplianceFolder from './steps/create-compliance-folder';
 import storeCompressedComplianceFolderInABucket from './steps/store-compressed-compliance-folder-in-a-bucket';
 import copyDocFolderIntoCompliance from './steps/copy-doc-folder-into-compliance';
-import getPrInformationIntoCompliance from './steps/get-pr-information-into-compliance';
+import getGhInformationIntoCompliance from './steps/get-gh-information-into-compliance';
 import createTxtFiles from './steps/create-txt-files';
 
 const start = async (): Promise<void> => {
@@ -13,7 +13,7 @@ const start = async (): Promise<void> => {
     await createComplianceFolder();
     await copyTestFolderIntoCompliance();
     await copyDocFolderIntoCompliance();
-    await getPrInformationIntoCompliance();
+    await getGhInformationIntoCompliance();
     await createTxtFiles();
     await compressComplianceFolder();
     await storeCompressedComplianceFolderInABucket();
