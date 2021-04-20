@@ -30,20 +30,23 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
       },
     } = github;
 
-    console.log(
-      'context ===> ',
-      util.inspect(github.context, true, Infinity, true),
-    );
-
     try {
       // Get PR by commit SHA
       const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
       if (pull_request) {
-        console.log(
-          'pull request ===> ',
-          util.inspect(pull_request, true, Infinity, true),
-        );
+        const pullRequestHaveBody = Boolean(pull_request.body);
+
+        if (pullRequestHaveBody) {
+          const issuesMatcher = /(#\d*)/gim;
+          // @ts-ignore
+          const matches = [...pull_request.body.matchAll(issuesMatcher)];
+          const issues = matches.map((match) =>
+            Number(match[0].split('#').pop()),
+          );
+
+          console.log({ issues });
+        }
 
         // Create github folder and write to disk
         await io.mkdirP(githubFolder);
