@@ -30,13 +30,21 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
       },
     } = github;
 
-    console.log(util.inspect(github.context, true, Infinity, true));
+    console.log(
+      'context ===> ',
+      util.inspect(github.context, true, Infinity, true),
+    );
 
     try {
       // Get PR by commit SHA
       const pull_request = await getPullRequestByCommitSHA({ octokit, sha });
 
       if (pull_request) {
+        console.log(
+          'pull request ===> ',
+          util.inspect(pull_request, true, Infinity, true),
+        );
+
         // Create github folder and write to disk
         await io.mkdirP(githubFolder);
         gitEvidence = { ...gitEvidence, pull_request };
