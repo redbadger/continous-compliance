@@ -116,3 +116,22 @@ GitHub actions are available to use in repos via tag release. To create a new re
 ```sh
 yarn create-tag v0.1
 ```
+
+To delete a tag release
+
+```sh
+yarn delete-tag v0.1
+```
+
+### Test
+
+All steps are unit tested and CI/CD runs them in tag release git event, to run it locally
+
+```sh
+yarn test
+```
+
+### Dev tools
+
+- Linter (ESLint) and code formatter (Prettier) are enforced on pre-commit git events
+- Dependencies and Github actions updates are automated via [dependabot](https://github.com/dependabot), it would come as pull request that a developer can review and merge
