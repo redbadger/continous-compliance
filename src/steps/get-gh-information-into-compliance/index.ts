@@ -11,13 +11,25 @@ import {
   writeGhInfoIntoDisk,
 } from './helper';
 
+/**
+ * @async
+ * @description If `github-token` input is given it would gather information about the current pull request, issues and commits associated with it and paste it into compliance folder
+ * @exports getGhInformationIntoComplianceFolder
+ * @function
+ * @name getGhInformationIntoComplianceFolder
+ * @returns {void}
+ */
+
 const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
+  // Create an object where store Github API data
   let gitEvidence: GitHubEvidence = {
     pull_request: undefined,
     commits: undefined,
     issues: undefined,
   };
+  // Get Github token from input 'github-token'
   const ghToken = core.getInput('github-token');
+  // Check if token is present
   const isGhToken = Boolean(ghToken);
 
   if (isGhToken) {
@@ -65,6 +77,7 @@ const getGhInformationIntoComplianceFolder = async (): Promise<void> => {
           core.info(
             `Gathering information about commits associated with PR #${pull_number} 📝`,
           );
+          // Writing Github API data on JSON file
           await writeGhInfoIntoDisk(gitEvidence);
         } else {
           core.warning(`No commits associated with PR #${pull_number}`);

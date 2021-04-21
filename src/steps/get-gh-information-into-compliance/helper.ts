@@ -15,6 +15,16 @@ interface GetPullRequestByCommitSHA {
   sha: string;
 }
 
+/**
+ * @async
+ * @description Using Github API node client (octokit) search for a pull request by commit sha
+ * @exports getPullRequestByCommitSHA
+ * @function
+ * @name getPullRequestByCommitSHA
+ * @param {GetPullRequestByCommitSHA}
+ * @returns {PullRequestSearchResponseItem}
+ */
+
 export const getPullRequestByCommitSHA = async ({
   octokit,
   sha,
@@ -46,6 +56,16 @@ interface GetCommitsByPr {
   repo: string;
   pull_number: number;
 }
+
+/**
+ * @async
+ * @description Using Github API node client (octokit) get list of commits associated with a pull request
+ * @exports getPullRequestByCommitSHA
+ * @function
+ * @name getPullRequestByCommitSHA
+ * @param {GetCommitsByPr}
+ * @returns {PullRequestListCommitsResponse}
+ */
 
 export const getCommitsByPr = async ({
   octokit,
@@ -84,6 +104,16 @@ const {
   promises: { writeFile },
 } = fs;
 
+/**
+ * @async
+ * @description Write a JSON file on compliance/github folder with the data collected via Github API
+ * @exports writeGhInfoIntoDisk
+ * @function
+ * @name writeGhInfoIntoDisk
+ * @param {GitHubEvidence}
+ * @returns {void}
+ */
+
 export const writeGhInfoIntoDisk = async (gitEvidence: GitHubEvidence) => {
   try {
     core.info(`Saving GitHub evidence on ${githubInfoPath}`);
@@ -99,6 +129,16 @@ interface GetIssues {
   repo: string;
   pull_request: PullRequestSearchResponseItem;
 }
+
+/**
+ * @async
+ * @description Write a JSON file on compliance/github folder with the data collected via Github API
+ * @exports getIssues
+ * @function
+ * @name getIssues
+ * @param {GetIssues}
+ * @returns Promise<Issues[] | undefined>
+ */
 
 export const getIssues = async ({
   octokit,
