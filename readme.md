@@ -8,6 +8,8 @@ This GitHub Action will automatically gather compliance information about:
 
 And store it in a Google Cloud Storage bucket as evidence for regulators.
 
+> "Compliance broadly boils down to: Have justifiable policies in place, and prove you follow them. [Gary Shutter, Compliance and continuous deployment, 2020](https://gshutler.com/2020/12/compliance-and-continuous-deployment/)"
+
 ## Getting started
 
 You can include the action in your workflow to trigger on any event that GitHub actions supports. Your workflow will need to include the actions/checkout step before this workflow runs in order for gather the evidence
